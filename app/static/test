@@ -1,0 +1,3 @@
+appwrite projects create --name "CLI" --teamId "organization-6451fd1f65eddbf82d3c"  --region 'Frankfurt'
+
+appwrite projects create --name "CLI" --projectId 'unique()' --teamId "6451fd1f65eddbf82d3c" --region 'Frankfurt'
