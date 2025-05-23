@@ -1,0 +1,10 @@
+{
+    "db" : {
+        "name": "testdb",
+        "host": "db",
+        "port": 5432,
+        "user": "postgres",
+        "password": "Paddi_1984" }
+}
+
+
