@@ -1,5 +1,92 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
+-- fuel table sql queries
+CREATE TABLE bunksbuddyproducts(id integer,product TEXT, city varchar(100),latitude float,longitude float,price float);
+
+COPY bunksbuddyproducts(id,product,city, latitude, longitude, price)
+FROM '/docker-entrypoint-initdb.d/fuel_data_updated.csv'
+DELIMITER ','
+CSV HEADER;
+
+
+ALTER TABLE bunksbuddyproducts
+ADD COLUMN location GEOMETRY(Point, 4326);
+
+UPDATE bunksbuddyproducts
+SET location = ST_SetSRID(ST_MakePoint(longitude::DOUBLE PRECISION,latitude::DOUBLE PRECISION ),4326);
+----------------------------------
+
+-- create hsitroy new table
+CREATE TABLE history_new (
+    id integer,
+    phone TEXT,
+    price FLOAT,
+    litres FLOAT,
+    saved FLOAT,
+    creationdate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    petrolbunkid TEXT,
+    product TEXT);
+
+COPY history_new(id, phone, price, litres, saved, creationdate, petrolbunkid, product)
+FROM '/docker-entrypoint-initdb.d/history_new.csv'
+DELIMITER ','
+CSV HEADER;
+
+--"id","phone","price","litres","saved","creationdate","petrolbunkid","product"
+------------------------------------
+
+
+
+----------users_new table sql queries
+CREATE TABLE users_new (
+    id integer,
+    name TEXT,
+    phone TEXT,
+    vehicle_number TEXT,
+    dob TEXT,
+    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ) ;
+
+COPY users_new(id,name, phone, vehicle_number, dob,createdat, updatedat)
+FROM '/docker-entrypoint-initdb.d/users_new.csv'
+DELIMITER ','
+CSV HEADER;   
+--------------------------------------
+
+----- weigh bridge table sql queries
+CREATE TABLE weigh_bridge_statewise (
+    name TEXT,
+    phone TEXT,
+    city TEXT,
+    state TEXT,
+    pincode TEXT,
+    business_status TEXT,
+    latitude FLOAT,
+    longitude FLOAT,
+    formatted_address TEXT,
+    place_id TEXT,
+    rating TEXT,
+    user_ratings_total TEXT
+);
+
+ALTER TABLE weigh_bridge_statewise
+ADD COLUMN location GEOMETRY(Point, 4326),
+ADD COLUMN capacity TEXT,
+ADD COLUMN length TEXT;
+
+
+
+UPDATE weigh_bridge_statewise
+SET location = ST_SetSRID(
+                  ST_MakePoint(
+                      longitude::DOUBLE PRECISION,
+                      latitude::DOUBLE PRECISION
+                  ),
+                  4326
+              );
+----------------------------------
+
+-------- CNG table sql queries
 CREATE TABLE cng_stations (
     name TEXT,
     latitude FLOAT,
@@ -103,3 +190,8 @@ COPY toll_plaza(sr_no,state,nh_no,toll_plaza_name,toll_plaza_location,section_st
 FROM '/docker-entrypoint-initdb.d/toll_plaza_data.csv'
 DELIMITER ','
 CSV HEADER;
+
+
+
+
+
