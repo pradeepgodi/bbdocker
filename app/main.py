@@ -11,6 +11,7 @@ import toll_plaza_api_service as toll
 # import weigh_bridge_api_service as wb
 import weigh_bridges_nearby_api_service as nwb
 import cng_api_service as cng
+import ev_stations_api_service as ev
 
 
 from urllib.request import urlopen 
@@ -41,6 +42,7 @@ TABLE_TOLL_PLAZA= 'toll_plaza';
 TABLE_WEIGH_BRIDGE='test_weigh_bridge';
 TABLE_WEIGH_BRIDGE_NEARBY='weigh_bridge_statewise';
 TABLE_CNG_STATIONS= 'cng_stations';
+TABLE_EV_STATIONS= 'ev_stations';
 
 
 # cursor.execute("""INSERT INTO BUNKSBUDDY (sensor_id, longitude, latitude, country, sensorTemp, sensorPressure, sensorTime, sensorLocation) VALUES ('F040520 BJI910J 2', 77.58133,12.9329, 'Goa', 0, 996, now(), ST_GeomFromText('POINT(77.58133 12.9329)',4326))""");
@@ -48,18 +50,18 @@ TABLE_CNG_STATIONS= 'cng_stations';
 # cursor.execute('''delete FROM BUNKSBUDDY;''')
 # connection.commit();
 # cursor.execute('''CREATE TABLE IF NOT EXISTS BUNKSBUDDY(id integer, city varchar(100),latitude float,longitude float,price float,location geometry);''')
-# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_NAME}(id integer,product varchar(100), city varchar(100),latitude float,longitude float,price float,location geometry);''')
+cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_NAME}(id integer,product varchar(100), city varchar(100),latitude float,longitude float,price float,location geometry);''')
+connection.commit();
+#
+cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_USERS_NAME}(id SERIAL primary key, name varchar(100), phone varchar(100),vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp);''')
+# CREATE TABLE IF NOT EXISTS Users_New(id SERIAL primary key, name varchar(100),phone varchar(100), vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp)
+connection.commit();
+#===
+# cursor.execute(f'''DROP TABLE IF EXISTS {TABLE_HISTORY_NAME};''')
 # connection.commit();
-# #
-# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_USERS_NAME}(id SERIAL primary key, name varchar(100), phone varchar(100),vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp);''')
-# # CREATE TABLE IF NOT EXISTS Users_New(id SERIAL primary key, name varchar(100),phone varchar(100), vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp)
-# connection.commit();
-# #===
-# # cursor.execute(f'''DROP TABLE IF EXISTS {TABLE_HISTORY_NAME};''')
-# # connection.commit();
 
-# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_HISTORY_NAME}(id SERIAL primary key, phone varchar(100), price float, litres float, saved float, creationDate varchar(100), petrolBunkId varchar(100), product varchar(100));''')
-# connection.commit();
+cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_HISTORY_NAME}(id SERIAL primary key, phone varchar(100), price float, litres float, saved float, creationDate varchar(100), petrolBunkId varchar(100), product varchar(100));''')
+connection.commit();
 
 # cursor.execute(f'''select count(*) FROM {TABLE_NAME};''')
 # # Fetch all rows from database
@@ -255,6 +257,18 @@ def cngAlongRoute():
     header_validation=checkHeader(request)
     data = request.get_json()
     return cng.getCngAlongRouteByPoints(header_validation,cursor, TABLE_CNG_STATIONS,data)
+
+@app.route('/nearbyEVStations',methods=['POST'])
+def getEVStations():    
+    header_validation=checkHeader(request)
+    data = request.get_json()
+    return ev.get_nearby_ev_stations(header_validation,cursor, TABLE_EV_STATIONS,data)
+     
+@app.route('/evAlongRouteByPoints',methods=['POST'])
+def evStationsAlongRoute():
+    header_validation=checkHeader(request)
+    data = request.get_json()
+    return ev.getEVAlongRouteByPoints(header_validation,cursor, TABLE_EV_STATIONS,data)
 
 
 ## Pradeep Godi - code ends here

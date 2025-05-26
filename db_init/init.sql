@@ -86,6 +86,33 @@ SET location = ST_SetSRID(
               );
 ----------------------------------
 
+-- ev data 
+CREATE TABLE ev_stations (
+    name TEXT,
+    latitude FLOAT,
+    longitude FLOAT,
+    phone TEXT,
+    address TEXT
+);
+
+COPY ev_stations(name, latitude, longitude, phone, address)
+FROM '/docker-entrypoint-initdb.d/ev_data.csv'
+DELIMITER ','
+CSV HEADER;
+
+ALTER TABLE ev_stations
+ADD COLUMN location GEOMETRY(Point, 4326);
+
+UPDATE ev_stations
+SET location = ST_SetSRID(
+                  ST_MakePoint(
+                      longitude::DOUBLE PRECISION,
+                      latitude::DOUBLE PRECISION
+                  ),
+                  4326
+              );
+
+
 -------- CNG table sql queries
 CREATE TABLE cng_stations (
     name TEXT,
@@ -190,6 +217,9 @@ COPY toll_plaza(sr_no,state,nh_no,toll_plaza_name,toll_plaza_location,section_st
 FROM '/docker-entrypoint-initdb.d/toll_plaza_data.csv'
 DELIMITER ','
 CSV HEADER;
+------------------------------------------
+
+
 
 
 
