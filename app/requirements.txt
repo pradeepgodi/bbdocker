@@ -7,4 +7,5 @@ pandas
 gevent
 python-dotenv
 geopy
+Flask-JWT-Extended
 

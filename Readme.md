@@ -29,7 +29,8 @@ B] Updating existing code when the backend is updated/modified. Start the Docker
       You should not see the webpage on the browser http://127.0.0.1:5000     
 
 
-
+C] To download libraries into wheelhouse
+PS E:\BB\bb_api_service\bb_dockerized> pip download -r .\app\requirements.txt -d wheelhouse
 
 
 
