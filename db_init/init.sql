@@ -1,5 +1,35 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
+
+-- vishram ghar outlets
+CREATE TABLE vishram_ghar (
+    omc TEXT,
+    code TEXT,
+    name TEXT,
+    area TEXT,
+    latitude FLOAT,
+    longitude FLOAT  
+);
+
+
+COPY vishram_ghar(omc, code, name, area, latitude, longitude)
+FROM '/docker-entrypoint-initdb.d/vishram_ghar_data.csv'
+DELIMITER ','
+CSV HEADER;
+
+ALTER TABLE vishram_ghar
+ADD COLUMN location GEOMETRY(Point, 4326);
+
+UPDATE vishram_ghar
+SET location = ST_SetSRID(
+                  ST_MakePoint(
+                      longitude::DOUBLE PRECISION,
+                      latitude::DOUBLE PRECISION
+                  ),
+                  4326
+              );
+
+
 -- fuel table sql queries
 CREATE TABLE bunksbuddyproducts(id integer,product TEXT, city varchar(100),latitude float,longitude float,price float);
 

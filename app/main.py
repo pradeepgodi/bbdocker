@@ -12,6 +12,7 @@ import toll_plaza_api_service as toll
 import weigh_bridges_nearby_api_service as nwb
 import cng_api_service as cng
 import ev_stations_api_service as ev
+import vishram_ghar_api_service as ghar
 
 
 from urllib.request import urlopen 
@@ -43,6 +44,7 @@ TABLE_WEIGH_BRIDGE='test_weigh_bridge';
 TABLE_WEIGH_BRIDGE_NEARBY='weigh_bridge_statewise';
 TABLE_CNG_STATIONS= 'cng_stations';
 TABLE_EV_STATIONS= 'ev_stations';
+TABLE_VISHRAM_GHAR= 'vishram_ghar';
 
 
 # cursor.execute("""INSERT INTO BUNKSBUDDY (sensor_id, longitude, latitude, country, sensorTemp, sensorPressure, sensorTime, sensorLocation) VALUES ('F040520 BJI910J 2', 77.58133,12.9329, 'Goa', 0, 996, now(), ST_GeomFromText('POINT(77.58133 12.9329)',4326))""");
@@ -270,6 +272,19 @@ def evStationsAlongRoute():
     data = request.get_json()
     return ev.getEVAlongRouteByPoints(header_validation,cursor, TABLE_EV_STATIONS,data)
 
+
+
+@app.route('/nearbyVishramGhars',methods=['POST'])
+def nearby_vishram_ghars():
+    header_validation=checkHeader(request)
+    data = request.get_json()
+    return ghar.getNearbyVishramGhars(header_validation,cursor, TABLE_VISHRAM_GHAR,data)
+
+@app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
+def vishram_ghars_along_route():
+    header_validation=checkHeader(request)
+    data = request.get_json()
+    return ghar.getVishramGharAlongRouteByPoints(header_validation,cursor, TABLE_VISHRAM_GHAR,data)
 
 ## Pradeep Godi - code ends here
 
