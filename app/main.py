@@ -22,7 +22,6 @@ import ev_stations_api_service as ev
 import token_api_service as token
 import low_fuel_api_service as lowfuel
 import users_api_service as user
-import vishram_ghar_api_service as ghar
 
 
 from urllib.request import urlopen 
@@ -39,8 +38,8 @@ db_file_name = "database_config.json"
 with open(file=db_file_name) as f:
     db_config = json.load(f)
 connection = psycopg2.connect(dbname=db_config['db']['name'],
-                              host=db_config['db']['host'],
-                               port=db_config['db']['port'],
+                              host=db_config['db']['host'],  
+                               port=db_config['db']['port'],    
                                 user=db_config['db']['user'],
                                   password=db_config['db']['password'])
 cursor = connection.cursor()
@@ -73,27 +72,6 @@ TABLE_WEIGH_BRIDGE='test_weigh_bridge';
 TABLE_WEIGH_BRIDGE_NEARBY='weigh_bridge_statewise';
 TABLE_CNG_STATIONS= 'cng_stations';
 TABLE_EV_STATIONS= 'ev_stations';
-TABLE_VISHRAM_GHAR='vishram_ghar';
-
-
-# cursor.execute("""INSERT INTO BUNKSBUDDY (sensor_id, longitude, latitude, country, sensorTemp, sensorPressure, sensorTime, sensorLocation) VALUES ('F040520 BJI910J 2', 77.58133,12.9329, 'Goa', 0, 996, now(), ST_GeomFromText('POINT(77.58133 12.9329)',4326))""");
-# connection.commit()
-# cursor.execute('''delete FROM BUNKSBUDDY;''')
-# connection.commit();
-# cursor.execute('''CREATE TABLE IF NOT EXISTS BUNKSBUDDY(id integer, city varchar(100),latitude float,longitude float,price float,location geometry);''')
-# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_NAME}(id integer,product varchar(100), city varchar(100),latitude float,longitude float,price float,location geometry);''')
-# connection.commit();
-# #
-# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_USERS_NAME}(id SERIAL primary key, name varchar(100), phone varchar(100),vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp);''')
-# # CREATE TABLE IF NOT EXISTS Users_New(id SERIAL primary key, name varchar(100),phone varchar(100), vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp)
-# connection.commit();
-# #===
-# # cursor.execute(f'''DROP TABLE IF EXISTS {TABLE_HISTORY_NAME};''')
-# # connection.commit();
-
-# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_HISTORY_NAME}(id SERIAL primary key, phone varchar(100), price float, litres float, saved float, creationDate varchar(100), petrolBunkId varchar(100), product varchar(100));''')
-# connection.commit();
-
 
 #Decode Polyline
 def decode_polyline(encoded_polyline): 
@@ -258,26 +236,44 @@ def userTable():
             name = data.get('name')
             phone = data.get('phone')
             vehicle_number = data.get('vehicle_number')
-            message= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME) 
-            return message
+            record= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
+
+            try:
+                current_user_identity = get_jwt_identity()
+                new_access_token = create_access_token(identity=current_user_identity)
+                new_refresh_token = create_refresh_token(identity=current_user_identity)
+                return jsonify(access_token=new_access_token,refresh_token=new_refresh_token,user_records=record), 200
+            except Exception as e:  
+                print(f"Error in refreshing token: {e}")
+                return jsonify({"error": "Failed to refresh token"}), 500
+            # return message
     else:
         return {"message": "Body can't be empty"},400;
 
 
-# Vishram Ghar APIs
-@app.route('/nearbyVishramGhars',methods=['POST'])
-@jwt_required()
-def nearby_vishram_ghars():
-    header_validation=True
-    data = request.get_json()
-    return ghar.getNearbyVishramGhars(header_validation,cursor, TABLE_VISHRAM_GHAR,data)
+# # User data handling APIs
+# @app.route('/getUserRecord',methods=['POST'])
+# @jwt_required()
+# def userTable():
+#     data = request.get_json()
+#     if data:
+#         # if request.method == 'GET':
+#         #     phone = data.get('phone')
+#         #     message = user.getUsers(cursor, TABLE_USERS_NAME,phone)
+#         #     if message:
+#         #         return jsonify(message), 200
+#         #     else:
+#         #         return jsonify({"message": "User not found"}), 404
+#         # elif request.method == 'POST':    
+#         name = data.get('name')
+#         phone = data.get('phone')
+#         vehicle_number = data.get('vehicle_number')
+#         message= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
 
-@app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
-@jwt_required()
-def vishram_ghars_along_route():
-    header_validation=True
-    data = request.get_json()
-    return ghar.getVishramGharAlongRouteByPoints(header_validation,cursor, TABLE_VISHRAM_GHAR,data)
+
+#         return message
+#     else:
+#         return {"message": "Body can't be empty"},400;
 
 
 ## Pradeep Godi - code ends here
