@@ -7,11 +7,21 @@ from shapely.geometry import Point, LineString
 import polyline;
 from flask import Flask,request, jsonify, render_template
 import pandas,os
+
+import os
+from flask import Flask, request, jsonify
+from flask_jwt_extended import (JWTManager, create_access_token, jwt_required,get_jwt_identity, create_refresh_token,get_jwt)
+from datetime import timedelta
+
+
+
 import toll_plaza_api_service as toll
-# import weigh_bridge_api_service as wb
 import weigh_bridges_nearby_api_service as nwb
 import cng_api_service as cng
 import ev_stations_api_service as ev
+import token_api_service as token
+import low_fuel_api_service as lowfuel
+import users_api_service as user
 import vishram_ghar_api_service as ghar
 
 
@@ -35,6 +45,25 @@ connection = psycopg2.connect(dbname=db_config['db']['name'],
                                   password=db_config['db']['password'])
 cursor = connection.cursor()
 
+## JWT Configuration
+# Set the JWT access and refresh token expiration times
+# You can adjust these values as per your requirements.
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", os.urandom(32).hex()) # REPLACE THIS IN PRODUCTION!
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=int(os.environ.get("ACCESS_TOKEN_EXPIRY_HOURS"))) # Access tokens expire in 1 hour
+app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=int(os.environ.get("REFRESH_TOKEN_EXPIRY_DAYS"))) # Refresh tokens expire in 30 days
+jwt = JWTManager(app)
+
+# --- Blacklisting Mechanism (for token revocation) ---
+# In a real production application, you would use a persistent store (like Redis, a database)
+# to maintain this blacklist, so it survives server restarts.
+# For this example, it's an in-memory set.
+blacklist = set()
+# This function will be called whenever a protected endpoint is accessed,
+# to check if the JWT's unique identifier (jti) is in our blacklist.
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blacklist(jwt_header, jwt_payload):
+    jti = jwt_payload["jti"]
+    return jti in blacklist
 
 TABLE_NAME='BUNKSBUDDYPRODUCTS';
 TABLE_USERS_NAME='Users_New';
@@ -44,7 +73,7 @@ TABLE_WEIGH_BRIDGE='test_weigh_bridge';
 TABLE_WEIGH_BRIDGE_NEARBY='weigh_bridge_statewise';
 TABLE_CNG_STATIONS= 'cng_stations';
 TABLE_EV_STATIONS= 'ev_stations';
-TABLE_VISHRAM_GHAR= 'vishram_ghar';
+TABLE_VISHRAM_GHAR='vishram_ghar';
 
 
 # cursor.execute("""INSERT INTO BUNKSBUDDY (sensor_id, longitude, latitude, country, sensorTemp, sensorPressure, sensorTime, sensorLocation) VALUES ('F040520 BJI910J 2', 77.58133,12.9329, 'Goa', 0, 996, now(), ST_GeomFromText('POINT(77.58133 12.9329)',4326))""");
@@ -52,23 +81,19 @@ TABLE_VISHRAM_GHAR= 'vishram_ghar';
 # cursor.execute('''delete FROM BUNKSBUDDY;''')
 # connection.commit();
 # cursor.execute('''CREATE TABLE IF NOT EXISTS BUNKSBUDDY(id integer, city varchar(100),latitude float,longitude float,price float,location geometry);''')
-cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_NAME}(id integer,product varchar(100), city varchar(100),latitude float,longitude float,price float,location geometry);''')
-connection.commit();
-#
-cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_USERS_NAME}(id SERIAL primary key, name varchar(100), phone varchar(100),vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp);''')
-# CREATE TABLE IF NOT EXISTS Users_New(id SERIAL primary key, name varchar(100),phone varchar(100), vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp)
-connection.commit();
-#===
-# cursor.execute(f'''DROP TABLE IF EXISTS {TABLE_HISTORY_NAME};''')
+# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_NAME}(id integer,product varchar(100), city varchar(100),latitude float,longitude float,price float,location geometry);''')
+# connection.commit();
+# #
+# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_USERS_NAME}(id SERIAL primary key, name varchar(100), phone varchar(100),vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp);''')
+# # CREATE TABLE IF NOT EXISTS Users_New(id SERIAL primary key, name varchar(100),phone varchar(100), vehicle_number varchar(100), dob varchar(20), createdAt timestamp default current_timestamp, updatedAt timestamp default current_timestamp)
+# connection.commit();
+# #===
+# # cursor.execute(f'''DROP TABLE IF EXISTS {TABLE_HISTORY_NAME};''')
+# # connection.commit();
+
+# cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_HISTORY_NAME}(id SERIAL primary key, phone varchar(100), price float, litres float, saved float, creationDate varchar(100), petrolBunkId varchar(100), product varchar(100));''')
 # connection.commit();
 
-cursor.execute(f'''CREATE TABLE IF NOT EXISTS {TABLE_HISTORY_NAME}(id SERIAL primary key, phone varchar(100), price float, litres float, saved float, creationDate varchar(100), petrolBunkId varchar(100), product varchar(100));''')
-connection.commit();
-
-# cursor.execute(f'''select count(*) FROM {TABLE_NAME};''')
-# # Fetch all rows from database
-# record = cursor.fetchall()
-# print("Data from Database:- ", record)
 
 #Decode Polyline
 def decode_polyline(encoded_polyline): 
@@ -97,198 +122,165 @@ def get_nearyby_points(encoded_poline, product):
         })
     return nearby_points;
 
-## Example Usage 
-# polyline_str="g~|mAmooxMA{AT?C`D?z@xFE|C@lABlDAdIA`GCpECvBA"
-# nearby_points=get_nearyby_points(polyline_str)
-# for point in nearby_points:
-#     print(f"Near by: ID={point['country']}")
-##
-
 ## Pradeep Godi - code starts here
-@app.route('/tollCount',methods=['GET'])
-def tollCount():
-    """
-    Handles the '/tollCount' endpoint.
-    Validates the request header and returns the toll count by querying the database.
-    Returns:
-        JSON response containing the toll count or an error message.
-    """
-     # Validates the request header
-    header_validation=checkHeader(request)
-     # Returns the toll count by passing the header validation result, database cursor, and table name
-    return toll.getTollCount(header_validation,cursor, TABLE_TOLL_PLAZA)
 
-@app.route('/stateWiseTollCount', methods=['GET'])
-def getStateWiseTollCount():
-    """
-    Handles the '/stateWiseTollCount' endpoint.
-    Validates the request header and retrieves state-wise toll count data from the database.
-    Returns:
-        JSON response containing state-wise toll count or an error message.
-    """
-    header_validation=checkHeader(request)
-    return toll.getStateWiseTollCount(header_validation,cursor, TABLE_TOLL_PLAZA)
+@app.route('/',methods=['GET'])
+def rootPage():
+        # return "Welcome to BunksBuddy Apis!";
+        # return render_template('index_1.html')
+        return render_template('index.html')
 
 
+# Login API and access token generation
+@app.route("/login", methods=["POST"])
+def getTokensAtLogin():
+    """
+    Authenticates a user using their mobile number.
+    Assumes any pre-authentication (like OTP validation) is handled client-side.
+    Expects JSON: {"phone": "..."}
+    """
+    phone = request.json.get("phone", None)
+    access_token, refresh_token, user_record=token.get_tokens_at_login(phone, cursor, TABLE_USERS_NAME)
+    if not user_record:
+        return jsonify({"error": "User not found",'phone':phone}), 404
+    else:
+        return jsonify(
+                access_token=access_token,
+                refresh_token=refresh_token,
+                user_record=user_record
+            ), 200
+
+@app.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True) # This decorator ensures a valid refresh token is present
+def refresh_token():
+    try:
+        current_user_identity = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user_identity)
+        new_refresh_token = create_refresh_token(identity=current_user_identity)
+        return jsonify(access_token=new_access_token,refresh_token=new_refresh_token), 200
+    except Exception as e:  
+        print(f"Error in refreshing token: {e}")
+        return jsonify({"error": "Failed to refresh token"}), 500
+
+
+
+# Toll Plaza APIs
 @app.route('/tollsAlongRouteByPoints',methods=['POST'])
+@jwt_required()
 def tollsAlongRouteByPoint():
-    """
-    Handles the '/tollsAlongRouteByPoints' POST route.
-    This endpoint processes a request to retrieve tolls along a route based on 
-    provided geographical points. It validates the request headers, extracts 
-    the JSON payload, and delegates the processing to the `getTollsAlongRouteByPoint` 
-    method of the `toll` object.
-    Returns:
-        Response: The response from the `getTollsAlongRouteByPoint` method, 
-        which contains the toll information for the specified route.
-    Request Body:
-        JSON object containing the necessary data to identify the route.
-    Dependencies:
-        - `checkHeader(request)`: Validates the request headers.
-        - `toll.getTollsAlongRouteByPoint(header_validation, cursor, TABLE_TOLL_PLAZA, data)`: 
-        Retrieves toll information based on the provided data.
-    """
-    header_validation=checkHeader(request)
+    header_validation=True
     data = request.get_json()
     return toll.getTollsAlongRouteByPoint(header_validation,cursor, TABLE_TOLL_PLAZA,data)
     
 @app.route('/tollVehicleTypes',methods=['GET'])
+# @jwt_required()
 def tollVehicleTypes():
-    """
-    Handles the '/tollVehilceTypes' endpoint.
-    Validates the request header and retrieves vehicle types from the database.
-    Returns:
-        JSON response containing vehicle types or an error message.
-    """
-    header_validation=checkHeader(request)
+    header_validation=True
     return toll.getTollVehicleTypes(header_validation)
 
-# Weight Bridge APIs
-# @app.route('/weightBridgeCount',methods=['GET'])
-# def weightBridgeCount():    
-#     """
-#     Handles the '/weightBridgeCount' endpoint.
-#     Validates the request header and returns the weight bridge count by querying the database.
-#     Returns:
-#         JSON response containing the weight bridge count or an error message.
-#     """
-#     header_validation=checkHeader(request)
-#     return wb.getWeightBridgeCount(header_validation,cursor, TABLE_WEIGH_BRIDGE)
-
-# @app.route('/weighBridgeAlongRoute',methods=['POST'])
-# def getWeighBridges():
-#     """
-#     Handles the '/weighBridgeAlongRoute' POST route.
-#     This endpoint processes a request to retrieve weigh bridges along a route based on 
-#     provided geographical points. It validates the request headers, extracts 
-#     the JSON payload, and delegates the processing to the `getWeighBridgeAlongRoute` 
-#     method of the `wb` object.
-#     Returns:
-#         Response: The response from the `getWeighBridgeAlongRoute` method, 
-#         which contains the weigh bridge information for the specified route.
-#     Request Body:
-#         JSON object containing the necessary data to identify the route.
-#     Dependencies:
-#         - `checkHeader(request)`: Validates the request headers.
-#         - `wb.getWeighBridgeAlongRoute(header_validation,cursor, TABLE_WEIGH_BRIDGE,data)`: 
-#         Retrieves weigh bridge information based on the provided data.
-#     """
-#     header_validation=checkHeader(request)
-#     data = request.get_json()
-#     return wb.getWeighBridgeAlongRoute(header_validation,cursor, TABLE_WEIGH_BRIDGE,data)
-
-
-
-
-# @app.route('/weighBridgeNearMe',methods=['POST'])
-# def getWeighBridgeNearMe():
-#     """
-#     this API uses Google Places API to get the weigh bridges near the user location which is time consuming,
-#     hence not recomended to use in production. Use /nearbyWeighBridges instead.
-
-#     Handles the '/weighBridgeNearMe' POST route.
-#     This endpoint processes a request to retrieve weigh bridges near the user's location.
-#     It validates the request headers, extracts the JSON payload, and delegates the processing 
-#     to the `getWeighBridgeNearMe` method of the `wb` object.
-#     Returns:
-#         Response: The response from the `getWeighBridgeNearMe` method, 
-#         which contains the weigh bridge information for the specified location.
-#     Request Body:
-#         JSON object containing the necessary data to identify the user's location.
-#     Dependencies:
-#         - `checkHeader(request)`: Validates the request headers.
-#         - `wb.getWeighBridgeNearMe(header_validation,cursor, TABLE_WEIGH_BRIDGE,data)`: 
-#         Retrieves weigh bridge information based on the provided data.
-#     """
-#     header_validation=checkHeader(request)
-#     data = request.get_json()
-#     return wb.getWeighBridgeNearMe(header_validation,cursor, TABLE_WEIGH_BRIDGE,data)
-
-
+# Weigh Bridge APIs
 @app.route('/nearbyWeighBridges', methods=['POST'])
+@jwt_required() 
 def get_nearby_weigh_bridges():
-     
-    """
-    Handles the '/nearbyWeighBridges' GET route.
-    This endpoint processes a request to retrieve nearby weigh bridges based on the user's location.
-    It validates the request headers and delegates the processing to the `get_nearby_weigh_bridges` method of the `wb` object.
-    Returns:
-        Response: The response from the `get_nearby_weigh_bridges` method, 
-        which contains the nearby weigh bridge information for the specified location.
-    Dependencies:
-        - `checkHeader(request)`: Validates the request headers.
-        - `wb.get_nearby_weigh_bridges(header_validation,cursor, TABLE_WEIGH_BRIDGE,data)`: 
-        Retrieves nearby weigh bridge information based on the provided data.
-    """
-    header_validation=checkHeader(request)
     data = request.get_json()
-    return nwb.get_nearby_weigh_bridges(header_validation,cursor, TABLE_WEIGH_BRIDGE_NEARBY,data)
+    return nwb.get_nearby_weigh_bridges(True,cursor, TABLE_WEIGH_BRIDGE_NEARBY,data)
 
-
-
-
+# CNG stations APIs
 @app.route('/nearbyCNGStations',methods=['POST'])
+@jwt_required() 
 def getCNGStations():
-     header_validation=checkHeader(request)
+     header_validation=True
      data = request.get_json()
      return cng.get_nearby_cng_stations(header_validation,cursor, TABLE_CNG_STATIONS,data)
 
-
 @app.route('/cngAlongRouteByPoints',methods=['POST'])
+@jwt_required() 
 def cngAlongRoute():
-    header_validation=checkHeader(request)
+    header_validation=True
     data = request.get_json()
     return cng.getCngAlongRouteByPoints(header_validation,cursor, TABLE_CNG_STATIONS,data)
 
+# EV stations APIs
 @app.route('/nearbyEVStations',methods=['POST'])
 def getEVStations():    
-    header_validation=checkHeader(request)
+    header_validation=True
     data = request.get_json()
     return ev.get_nearby_ev_stations(header_validation,cursor, TABLE_EV_STATIONS,data)
      
 @app.route('/evAlongRouteByPoints',methods=['POST'])
 def evStationsAlongRoute():
-    header_validation=checkHeader(request)
+    header_validation=True
     data = request.get_json()
     return ev.getEVAlongRouteByPoints(header_validation,cursor, TABLE_EV_STATIONS,data)
 
+# Low Fuel APIs Petrol and Diesel
+@app.route('/getProductById',methods=['POST'])
+@jwt_required()
+def getProductById():
+    item = request.get_json()
+    id=item.get('id')
+    products =lowfuel.getProductByItsId(cursor,TABLE_NAME,id)
+    if products:
+        return jsonify(products),200
+    else:
+        return jsonify({'id': id, "message": "Product Not Found"}),400
+
+@app.route('/productsNearByPoints',methods=['POST'])
+@jwt_required()
+def productsNearByPoints():
+    try:
+        data = request.get_json()
+        routePoints=data.get('points')
+        productType=data.get('product')
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"},400;
+    nearbylocations=lowfuel.getNearbyFuelStations(routePoints,productType,cursor,TABLE_NAME)
+    if nearbylocations:
+        return jsonify(nearbylocations), 200    
+    else:
+        return jsonify({"message": "No nearby locations found"}), 404
+    
+# User data handling APIs
+@app.route('/users',methods=['GET','POST'])
+@jwt_required()
+def userTable():
+    data = request.get_json()
+    if data:
+        if request.method == 'GET':
+            phone = data.get('phone')
+            message = user.getUsers(cursor, TABLE_USERS_NAME,phone)
+            if message:
+                return jsonify(message), 200
+            else:
+                return jsonify({"message": "User not found"}), 404
+        elif request.method == 'POST':    
+            name = data.get('name')
+            phone = data.get('phone')
+            vehicle_number = data.get('vehicle_number')
+            message= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME) 
+            return message
+    else:
+        return {"message": "Body can't be empty"},400;
 
 
+# Vishram Ghar APIs
 @app.route('/nearbyVishramGhars',methods=['POST'])
+@jwt_required()
 def nearby_vishram_ghars():
-    header_validation=checkHeader(request)
+    header_validation=True
     data = request.get_json()
     return ghar.getNearbyVishramGhars(header_validation,cursor, TABLE_VISHRAM_GHAR,data)
 
 @app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
+@jwt_required()
 def vishram_ghars_along_route():
-    header_validation=checkHeader(request)
+    header_validation=True
     data = request.get_json()
     return ghar.getVishramGharAlongRouteByPoints(header_validation,cursor, TABLE_VISHRAM_GHAR,data)
 
+
 ## Pradeep Godi - code ends here
-
-
 
 
 @app.route('/deleteProduct',methods=['POST'])
@@ -337,35 +329,7 @@ def addProducts():
     #          return str(e);
     return {'city': 'test'}
 
-@app.route('/getProductById',methods=['POST'])
-def getProductById():
-    if(checkHeader(request)==False):
-         return {"message": "Token is not invalid"},401;
-    # data1 = request.get_data()
-    item = request.get_json()
-    print(item);
-    
-    try:
-                            products = []
-                            id=item.get('id')
-                            cursor.execute(f"""select id,city,latitude,longitude,price,product from {TABLE_NAME} where id= {id}""");
-                            records = cursor.fetchall()
-                            for record in records:
-                                products.append({
-                                'id': record[0],
-                                'city': record[1],
-                                'latitude': record[2],
-                                'longitude': record[3],
-                                'price': record[4],
-                                'product': record[5],
-                                });
-                            # connection.commit()
 
-                            return products;
-    except Exception as e:
-            connection.rollback();
-            print(str(e))   
-            return {'code': 400, "message": "Failed to save"}
 
 def call(url,product):
     with app.app_context():
@@ -406,11 +370,7 @@ def call(url,product):
 
 #call('https://sasthamutton.com/JsonDisplayMarker.php?product=petrol');
 
-@app.route('/',methods=['GET'])
-def rootPage():
-        # return "Welcome to BunksBuddy Apis!";
-        # return render_template('index_1.html')
-        return render_template('index.html')
+
 
 @app.route('/loadPetrol',methods=['GET'])
 def loadPetrol():
@@ -467,46 +427,7 @@ def getProducts():
     }]);
 
 
-@app.route('/productsNearByPoints',methods=['POST'])
-def productsNearByPoints():
-    if(checkHeader(request)==False):
-         return {"message": "Token is not invalid"},401;
-    nearby_points = []
-    try:
-        # data1 = request.get_data()
-        data1 = request.get_json()
-        # data=data1.decode("utf-8")
-        # print(data1);
-        points=data1.get('points')
-        product=data1.get('product')
 
-        print('productsNearByPoints: called')
-        coordinations = points
-        line = LineString([(coord['longitude'],coord['latitude']) for coord in coordinations])
-        print("line.wkt =",line.wkt)
-        
-        cursor.execute(f"""Select distinct city, price,latitude, longitude, product,id from {TABLE_NAME} where product='{product}' and ST_DWithin(location::geography, ST_SetSRID(ST_GeomFromText(%s),4326), 200)""", (line.wkt,))
-        points = cursor.fetchall()
-        print('get_nearyby_points: completed')
-        print(points);
-       
-        for point in points:
-            # point_gem= loads(point[4]);
-            nearby_points.append({
-                'city': point[0],
-                'price': point[1],
-                'latitude': point[2],
-                'longitude': point[3],
-                'product': point[4],
-                'id': point[5]
-            })
-        return nearby_points;
-    except Exception as e:
-             #=== TODO: Email to my,hareesh - : 
-             cursor.execute("ROLLBACK")
-             connection.commit()
-             return {"message": "Internal Server."},500;
-            
 
 @app.route('/nearby',methods=['POST','GET'])
 def nearBy():
@@ -523,56 +444,9 @@ def nearBy():
     return jsonify(nearby_points)
     # return jsonify({'test':})
 
-@app.route('/users',methods=['GET','POST'])
-def userTable():
-    if(checkHeader(request)==False):
-         return {"message": "Token is not invalid"},401;
-    try:
-        if request.method == 'GET':
-            cursor.execute(f"""Select id, name, phone,vehicle_number, createdAt from {TABLE_USERS_NAME} """)
-            points = cursor.fetchall()
-            print('get_nearyby_points: completed')
-            print(points);
-            users = []
-            for point in points:
-                users.append({
-                    'id': point[0],
-                    'name': point[1],
-                    'phone': point[2],
-                    'vehicle_number': point[3],
-                    'createdAt': point[4]
-                })
-            return users;
-        if request.method == 'POST':
-            data1 = request.get_json()
-            name=data1.get('name')
-            phone=data1.get('phone')
-            vehicle_number=data1.get('vehicle_number')
-            #===
-            cursor.execute(f"""Select  count(name) from {TABLE_USERS_NAME} where phone='{phone}' """)
-            record = cursor.fetchone()
-            print(record[0]);
-            if(record[0]!=0):
-                return {"code": 400, "message": "User is Already Exists."}
-            #==
-            cursor.execute(f"""INSERT INTO {TABLE_USERS_NAME} (name, phone, vehicle_number) VALUES ('{name}', '{phone}','{vehicle_number}')""");
-            connection.commit();
-            cursor.execute(f"""Select  * from {TABLE_USERS_NAME} where phone='{phone}' """)
-            record = cursor.fetchone()
-            if(record):
-                if(record[0]!=0):
-                    return {"code": 200, "message": "Logged in Successfully", "user":{
-                        "id": record[0],
-                        "name": record[1],
-                        "phone": record[2],
-                    }}; 
-            return {"code": 200, "message": "User Data Saved Successfully"};
-    except Exception as e:
-             #=== TODO: Email to my,hareesh - : 
-             print(e)
-             cursor.execute("ROLLBACK")
-             connection.commit()
-             return {"message": "Internal Server."},500;
+
+
+
 
 @app.route('/health',methods=['GET'])
 def health():
@@ -640,31 +514,6 @@ def historyTable():
         
         return {"code": 400, "message": "User is not Exists."},400
 
-@app.route('/login', methods=['GET','POST'])
-def loginApi():
-    if request.method == 'GET':
-        phone = request.args.get("phone");
-        
-  
-    if request.method == 'POST':
-        try:
-            data1 = request.get_json()
-            phone=data1.get('phone')
-            cursor.execute(f"""Select  * from {TABLE_USERS_NAME} where phone='{phone}' """)
-            record = cursor.fetchone()
-            print(record[0]);
-            
-            if(record[0]!=0):
-                return {"code": 200, "message": "Logged in Successy", "user":{
-                    "id": record[0],
-                    "name": record[1],
-                    "phone": record[2],
-                }}; 
-            else :  
-                return {"code": 400, "message": "User is not found."}; 
-        except Exception as e:
-                print(str(e)) 
-        return {"code": 400, "message": "User is not found."}; 
 
 
 @app.route('/deleteHistory',methods=['POST'])
