@@ -150,6 +150,7 @@ def refresh_token():
 def tollsAlongRouteByPoint():
     header_validation=True
     data = request.get_json()
+    print("data=",data)
     return toll.getTollsAlongRouteByPoint(header_validation,cursor, TABLE_TOLL_PLAZA,data)
     
 @app.route('/tollVehicleTypes',methods=['GET'])
