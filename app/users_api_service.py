@@ -30,7 +30,7 @@ def checkUserExists(cursor, phone, TABLE_USERS_NAME):
 
 def addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME):
     if checkUserExists(cursor, phone, TABLE_USERS_NAME):
-        return  {"code": 400, "message": "User already exists with this phone number.","phone": phone}
+        return  {"code": 200, "message": "User already exists with this phone number.","phone": phone}
     else:
         cursor.execute(f"""INSERT INTO {TABLE_USERS_NAME} (name, phone, vehicle_number) VALUES ('{name}', '{phone}','{vehicle_number}')""");
         cursor.connection.commit();

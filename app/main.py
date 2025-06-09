@@ -118,14 +118,16 @@ def getTokensAtLogin():
     Expects JSON: {"phone": "..."}
     """
     phone = request.json.get("phone", None)
-    access_token, refresh_token, user_record=token.get_tokens_at_login(phone, cursor, TABLE_USERS_NAME)
-    if not user_record:
+    access_token, refresh_token, user=token.get_tokens_at_login(phone, cursor, TABLE_USERS_NAME)
+    if not user:
         return jsonify({"error": "User not found",'phone':phone}), 404
     else:
         return jsonify(
+                code=200,
+                message="Logged in Successfully",
                 access_token=access_token,
                 refresh_token=refresh_token,
-                user_record=user_record
+                user=user
             ), 200
 
 @app.route("/refresh", methods=["POST"])
@@ -242,11 +244,10 @@ def userTable():
                 current_user_identity = get_jwt_identity()
                 new_access_token = create_access_token(identity=current_user_identity)
                 new_refresh_token = create_refresh_token(identity=current_user_identity)
-                return jsonify(access_token=new_access_token,refresh_token=new_refresh_token,user_records=record), 200
+                return jsonify(access_token=new_access_token,refresh_token=new_refresh_token,message=record.get("message"),code=record.get('code', 200)), record.get('code', 200)
             except Exception as e:  
                 print(f"Error in refreshing token: {e}")
                 return jsonify({"error": "Failed to refresh token"}), 500
-            # return message
     else:
         return {"message": "Body can't be empty"},400;
 
@@ -421,7 +422,6 @@ def getProducts():
         "id":2,
         "name": "Diesel"
     }]);
-
 
 
 
