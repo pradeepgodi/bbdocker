@@ -22,6 +22,7 @@ import ev_stations_api_service as ev
 import token_api_service as token
 import low_fuel_api_service as lowfuel
 import users_api_service as user
+import vishram_ghar_api_service as ghar
 
 
 from urllib.request import urlopen 
@@ -72,6 +73,7 @@ TABLE_WEIGH_BRIDGE='test_weigh_bridge';
 TABLE_WEIGH_BRIDGE_NEARBY='weigh_bridge_statewise';
 TABLE_CNG_STATIONS= 'cng_stations';
 TABLE_EV_STATIONS= 'ev_stations';
+TABLE_VISHRAM_GHAR= 'vishram_ghar';
 
 #Decode Polyline
 def decode_polyline(encoded_polyline): 
@@ -150,7 +152,6 @@ def refresh_token():
 def tollsAlongRouteByPoint():
     header_validation=True
     data = request.get_json()
-    print("data=",data)
     return toll.getTollsAlongRouteByPoint(header_validation,cursor, TABLE_TOLL_PLAZA,data)
     
 @app.route('/tollVehicleTypes',methods=['GET'])
@@ -253,30 +254,17 @@ def userTable():
         return {"message": "Body can't be empty"},400;
 
 
-# # User data handling APIs
-# @app.route('/getUserRecord',methods=['POST'])
-# @jwt_required()
-# def userTable():
-#     data = request.get_json()
-#     if data:
-#         # if request.method == 'GET':
-#         #     phone = data.get('phone')
-#         #     message = user.getUsers(cursor, TABLE_USERS_NAME,phone)
-#         #     if message:
-#         #         return jsonify(message), 200
-#         #     else:
-#         #         return jsonify({"message": "User not found"}), 404
-#         # elif request.method == 'POST':    
-#         name = data.get('name')
-#         phone = data.get('phone')
-#         vehicle_number = data.get('vehicle_number')
-#         message= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
+@app.route('/nearbyVishramGhars',methods=['POST'])
+@jwt_required()
+def nearby_vishram_ghars():
+    data = request.get_json()
+    return ghar.getNearbyVishramGhars(True,cursor, TABLE_VISHRAM_GHAR,data)
 
-
-#         return message
-#     else:
-#         return {"message": "Body can't be empty"},400;
-
+@app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
+@jwt_required()
+def vishram_ghars_along_route():
+    data = request.get_json()
+    return ghar.getVishramGharAlongRouteByPoints(True,cursor, TABLE_VISHRAM_GHAR,data)
 
 ## Pradeep Godi - code ends here
 

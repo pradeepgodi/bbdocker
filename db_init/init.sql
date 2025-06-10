@@ -99,6 +99,11 @@ CREATE TABLE weigh_bridge_statewise (
     user_ratings_total TEXT
 );
 
+COPY weigh_bridge_statewise(name, phone, city, state, pincode, business_status, latitude, longitude, formatted_address, place_id, rating, user_ratings_total)
+FROM '/docker-entrypoint-initdb.d/weigh_bridge_statewise.csv'
+DELIMITER ','
+CSV HEADER; 
+
 ALTER TABLE weigh_bridge_statewise
 ADD COLUMN location GEOMETRY(Point, 4326),
 ADD COLUMN capacity TEXT,
@@ -152,16 +157,18 @@ CREATE TABLE cng_stations (
     address TEXT
 );
 
+COPY cng_stations(name, latitude, longitude, phone, address)
+FROM '/docker-entrypoint-initdb.d/cng_data.csv'
+DELIMITER ','
+CSV HEADER;
+
 ALTER TABLE cng_stations
 ADD COLUMN location GEOMETRY(Point, 4326);
 
 UPDATE cng_stations
 SET location = ST_SetSRID(ST_MakePoint(longitude::DOUBLE PRECISION,latitude::DOUBLE PRECISION ),4326);
 
-COPY cng_stations(name, latitude, longitude, phone, address)
-FROM '/docker-entrypoint-initdb.d/cng_data.csv'
-DELIMITER ','
-CSV HEADER;
+
 
 -- Toll plaza sql queries
 
