@@ -15,14 +15,14 @@ from datetime import timedelta
 
 
 
-import toll_plaza_api_service as toll
-import weigh_bridges_nearby_api_service as nwb
-import cng_api_service as cng
-import ev_stations_api_service as ev
-import token_api_service as token
-import low_fuel_api_service as lowfuel
-import users_api_service as user
-import vishram_ghar_api_service as ghar
+import services.toll_plaza_api_service as toll
+import services.weigh_bridges_nearby_api_service as nwb
+import services.cng_api_service as cng
+import services.ev_stations_api_service as ev
+import services.token_api_service as token
+import services.low_fuel_api_service as lowfuel
+import services.users_api_service as user
+import services.vishram_ghar_api_service as ghar
 
 
 from urllib.request import urlopen 
