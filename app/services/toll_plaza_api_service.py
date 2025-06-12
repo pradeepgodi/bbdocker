@@ -36,7 +36,7 @@ def getTollsAlongRouteByPoint(header_validation, cursor, TABLE_TOLL_PLAZA, data)
             car_jeep_van,4_to_6_axle,7_or_more_axle, bus_truck, hcm_eme,lcv,upto_3_axle_vehicle"""
         
         location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in data['points']])
-        print("location_lines=",location_lines)
+        # print("location_lines=",location_lines)
 
         # select the coulmn name for Single Journey price in the table based on vehicle type
         query_car_jeep_van = "car_jeep_van_single_journey" 
@@ -76,7 +76,7 @@ def getTollsAlongRouteByPoint(header_validation, cursor, TABLE_TOLL_PLAZA, data)
         for data in nearby_tolls:
             temp_dict = {"toll_plaza_name":data[1],"toll_plaza_id":int(data[0]),"latitude":data[2],"longitude":data[3],"toll_fee":data[4] }
             nearby_tolls_data.append(temp_dict)
-        print("nearby_tolls_data=",nearby_tolls_data)
+        # print("nearby_tolls_data=",nearby_tolls_data)
         return nearby_tolls_data,200
         
         # return {vehicle_type :nearby_tolls_data},200
