@@ -403,6 +403,7 @@ def productsNearBy():
     # return jsonify({'test':})
 
 @app.route('/getProducts',methods=['GET'])
+@jwt_required
 def getProducts():
     if(checkHeader(request)==False):
          return {"message": "Token is not invalid"},401;
@@ -456,6 +457,7 @@ def checkHeader(request):
     
 #id SERIAL primary key, phone varchar(100), price float, litres float, saved float     
 @app.route('/history',methods=['GET','POST'])
+@jwt_required()
 def historyTable():
     if request.method == 'GET':
         phone = request.args.get("phone");
@@ -504,6 +506,7 @@ def historyTable():
 
 
 @app.route('/deleteHistory',methods=['POST'])
+@jwt_required()
 def deleteHistory():
     if(checkHeader(request)==False):
          return {"message": "Token is not invalid"},401;
