@@ -403,10 +403,8 @@ def productsNearBy():
     # return jsonify({'test':})
 
 @app.route('/getProducts',methods=['GET'])
-@jwt_required
+@jwt_required()
 def getProducts():
-    if(checkHeader(request)==False):
-         return {"message": "Token is not invalid"},401;
     return jsonify([{
         "id":1,
         "name": "Petrol"
@@ -464,8 +462,8 @@ def historyTable():
         cursor.execute(f"""Select h.id, h.price, h.phone,h.litres, h.saved, h.creationDate, h.petrolBunkId,h.product, p.city from {TABLE_HISTORY_NAME} h  join {TABLE_NAME} p on CAST(h.petrolBunkId AS INTEGER)=p.id where h.phone='{phone}'""")
 
         points = cursor.fetchall()
-        print('historyTable: completed')
-        print(points);
+        # print('historyTable: completed')
+        # print(points);
         users = []
         for point in points:
             users.append({
@@ -494,7 +492,7 @@ def historyTable():
         #===
         cursor.execute(f"""Select  count(name) from {TABLE_USERS_NAME} where phone='{phone}' """)
         record = cursor.fetchone()
-        print(record[0]);
+        # print(record[0]);
         if(record[0]!=0):
             cursor.execute(f"""INSERT INTO {TABLE_HISTORY_NAME} (phone, price, litres,saved,creationDate, petrolBunkId,product) VALUES ('{phone}',{price},{litres},{saved}, '{creationDate}', '{petrolBunkId}','{product}' )""");
             connection.commit();
@@ -508,8 +506,8 @@ def historyTable():
 @app.route('/deleteHistory',methods=['POST'])
 @jwt_required()
 def deleteHistory():
-    if(checkHeader(request)==False):
-         return {"message": "Token is not invalid"},401;
+    # if(checkHeader(request)==False):
+    #      return {"message": "Token is not invalid"},401;
     if request.method == 'POST':
         data1 = request.get_json()
         phone=data1.get('phone')
