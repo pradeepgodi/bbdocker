@@ -224,11 +224,10 @@ def productsNearByPoints():
         return jsonify(nearbylocations), 200    
     else:
         return jsonify({"message": "No nearby locations found"}), 404
-    
-# User data handling APIs
-@app.route('/users',methods=['GET','POST'])
+
+@app.get('/users')
 @jwt_required()
-def userTable():
+def getUserRecord():
     data = request.get_json()
     if data:
         if request.method == 'GET':
@@ -238,22 +237,66 @@ def userTable():
                 return jsonify(message), 200
             else:
                 return jsonify({"message": "User not found"}), 404
-        elif request.method == 'POST':    
-            name = data.get('name')
-            phone = data.get('phone')
-            vehicle_number = data.get('vehicle_number')
-            record= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
 
+@app.post('/users')
+@jwt_required(optional=True)  # Optional JWT, can be used for user creation without authentication
+def userTable():
+    data = request.get_json()
+    if data:
+        name = data.get('name')
+        phone = data.get('phone')
+        vehicle_number = data.get('vehicle_number')
+        message=user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
+        if message.get('code', 200) == 201:
+            new_access_token, new_refresh_token=token.getTokens()
             try:
-                current_user_identity = get_jwt_identity()
-                new_access_token = create_access_token(identity=current_user_identity)
-                new_refresh_token = create_refresh_token(identity=current_user_identity)
-                return jsonify(access_token=new_access_token,refresh_token=new_refresh_token,message=record.get("message"),code=record.get('code', 200)), record.get('code', 200)
+                return jsonify(
+                    access_token=new_access_token,
+                    refresh_token=new_refresh_token,
+                    message=message.get("message"),
+                    code=message.get('code', 200)
+                ), message.get('code', 200)
             except Exception as e:  
                 print(f"Error in refreshing token: {e}")
                 return jsonify({"error": "Failed to refresh token"}), 500
+        elif message.get('code', 200) == 200:
+            return jsonify(
+                message=message.get("message"),
+                code=message.get('code', 200)
+            ), message.get('code', 200)    
     else:
         return {"message": "Body can't be empty"},400;
+
+
+# User data handling APIs
+# @app.route('/users',methods=['POST'])
+# # @jwt_required()
+# def userTable():
+#     data = request.get_json()
+#     if data:
+#         if request.method == 'GET':
+#             phone = data.get('phone')
+#             message = user.getUsers(cursor, TABLE_USERS_NAME,phone)
+#             if message:
+#                 return jsonify(message), 200
+#             else:
+#                 return jsonify({"message": "User not found"}), 404
+#         elif request.method == 'POST':    
+#             name = data.get('name')
+#             phone = data.get('phone')
+#             vehicle_number = data.get('vehicle_number')
+#             record= user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
+
+#             try:
+#                 current_user_identity = get_jwt_identity()
+#                 new_access_token = create_access_token(identity=current_user_identity)
+#                 new_refresh_token = create_refresh_token(identity=current_user_identity)
+#                 return jsonify(access_token=new_access_token,refresh_token=new_refresh_token,message=record.get("message"),code=record.get('code', 200)), record.get('code', 200)
+#             except Exception as e:  
+#                 print(f"Error in refreshing token: {e}")
+#                 return jsonify({"error": "Failed to refresh token"}), 500
+#     else:
+#         return {"message": "Body can't be empty"},400;
 
 
 @app.route('/nearbyVishramGhars',methods=['POST'])

@@ -32,5 +32,14 @@ def get_tokens_at_login(phone, cursor, TABLE_USERS_NAME):
         return jsonify({"msg": "Internal server error"}), 500
 
 
+def getTokens():
+    try:
+        current_user_identity = get_jwt_identity()
+        new_access_token = create_access_token(identity=current_user_identity)
+        new_refresh_token = create_refresh_token(identity=current_user_identity)
+        return new_access_token, new_refresh_token
+    except Exception as e:  
+        print(f"Error in refreshing token: {e}")
+        return jsonify({"error": "Failed to refresh token"}), 500
 
 
