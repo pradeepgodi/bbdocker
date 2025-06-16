@@ -186,12 +186,14 @@ def cngAlongRoute():
 
 # EV stations APIs
 @app.route('/nearbyEVStations',methods=['POST'])
+@jwt_required()
 def getEVStations():    
     header_validation=True
     data = request.get_json()
     return ev.get_nearby_ev_stations(header_validation,cursor, TABLE_EV_STATIONS,data)
      
 @app.route('/evAlongRouteByPoints',methods=['POST'])
+@jwt_required()
 def evStationsAlongRoute():
     header_validation=True
     data = request.get_json()
@@ -247,8 +249,9 @@ def userTable():
         phone = data.get('phone')
         vehicle_number = data.get('vehicle_number')
         message=user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
+        new_access_token, new_refresh_token=token.getTokens()
         if message.get('code', 200) == 201:
-            new_access_token, new_refresh_token=token.getTokens()
+            
             try:
                 return jsonify(
                     access_token=new_access_token,
@@ -261,6 +264,8 @@ def userTable():
                 return jsonify({"error": "Failed to refresh token"}), 500
         elif message.get('code', 200) == 200:
             return jsonify(
+                    access_token=new_access_token,
+                    refresh_token=new_refresh_token,
                 message=message.get("message"),
                 code=message.get('code', 200)
             ), message.get('code', 200)    
