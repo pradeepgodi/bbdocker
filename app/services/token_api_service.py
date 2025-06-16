@@ -2,12 +2,12 @@ from flask_jwt_extended import (JWTManager, create_access_token, jwt_required,ge
 from flask import Flask, jsonify, request
 
 
-def get_tokens_at_login(phone, cursor, TABLE_USERS_NAME):
+def checkUserExists(phone, cursor, TABLE_USERS_NAME):
     if not phone:
         return jsonify({"msg": "Missing mobile number"}), 400
     try:
-        phone = str(phone)
-        cursor.execute(f"""Select  * from {TABLE_USERS_NAME} where phone='{phone}' """)
+        # phone = str(phone)
+        cursor.execute(f"""Select  * from {TABLE_USERS_NAME} where phone='{str(phone)}' """)
         record = cursor.fetchone()
         if record is None:
             user={}
@@ -23,14 +23,24 @@ def get_tokens_at_login(phone, cursor, TABLE_USERS_NAME):
                 # "created_at": record[5],
                 # "updated_at": record[6]
             }
- 
-            access_token = create_access_token(identity=phone)
-            refresh_token = create_refresh_token(identity=phone)
+            access_token, refresh_token=create_tokens(phone)
         return access_token, refresh_token, user
     except Exception as e:
         print(f"Error in generating the token: {e}")
         return jsonify({"msg": "Internal server error"}), 500
 
+
+def create_tokens(phone):
+    phone = str(phone)
+    if not phone:
+        return jsonify({"msg": "Missing mobile number"}), 400
+    try:
+        access_token = create_access_token(identity=phone)
+        refresh_token = create_refresh_token(identity=phone)
+        return access_token, refresh_token
+    except Exception as e:
+        print(f"Error in creating tokens: {e}")
+        return jsonify({"msg": "Internal server error"}), 500
 
 def getTokens():
     try:
@@ -41,5 +51,6 @@ def getTokens():
     except Exception as e:  
         print(f"Error in refreshing token: {e}")
         return jsonify({"error": "Failed to refresh token"}), 500
+
 
 
