@@ -18,6 +18,7 @@ def getUsers(cursor, TABLE_USERS_NAME,phone):
 def isUserRecordPresent(cursor, phone, TABLE_USERS_NAME):
     try:
         cursor.execute(f"""Select count(name) from {TABLE_USERS_NAME} where phone='{str(phone)}' """)
+        cursor.connection.commit()
         record = cursor.fetchone()
         if(record[0]>0):
             return True  # user does exist
@@ -31,7 +32,12 @@ def addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME):
     if isUserRecordPresent(cursor, phone, TABLE_USERS_NAME):
         return  {"code": 200, "message": "User already exists with this phone number.","phone": phone}
     else:
-        cursor.execute(f"""INSERT INTO {TABLE_USERS_NAME} (name, phone, vehicle_number) VALUES ('{name}', '{phone}','{vehicle_number}')""");
+        try:
+            cursor.execute(f"""INSERT INTO {TABLE_USERS_NAME} (name, phone, vehicle_number) VALUES ('{name}', '{phone}','{vehicle_number}')""");
+            cursor.connection.commit()
+        except Exception as e:
+            print(f"Error inserting user: {e}")
+            return {"code": 500, "message": "Internal Server Error. User Data Not Saved."}
         if isUserRecordPresent(cursor, phone, TABLE_USERS_NAME):
             return {"code": 201, "message": "User Data Saved Successfully"}
         else:

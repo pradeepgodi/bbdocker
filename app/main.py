@@ -23,6 +23,7 @@ import services.token_api_service as token
 import services.low_fuel_api_service as lowfuel
 import services.users_api_service as user
 import services.vishram_ghar_api_service as ghar
+import services.history_api_service as history
 
 
 from urllib.request import urlopen 
@@ -473,70 +474,87 @@ def checkHeader(request):
         except Exception as e:
             return False
         return False
-    
-#id SERIAL primary key, phone varchar(100), price float, litres float, saved float     
+
+# History APIs
 @app.route('/history',methods=['GET','POST'])
 @jwt_required()
 def historyTable():
-    if request.method == 'GET':
-        phone = request.args.get("phone");
-        cursor.execute(f"""Select h.id, h.price, h.phone,h.litres, h.saved, h.creationDate, h.petrolBunkId,h.product, p.city from {TABLE_HISTORY_NAME} h  join {TABLE_NAME} p on CAST(h.petrolBunkId AS INTEGER)=p.id where h.phone='{phone}'""")
+    data = request.get_json()
+    if data:
+        if request.method == 'GET':
+            phone=data.get('phone')
+            if not phone:
+                return {"message": "Phone number is required"}, 400
+            else:
+                user_history=history.getUserHistory(cursor,phone,TABLE_HISTORY_NAME, TABLE_NAME)
+                return jsonify(user_history), 200
+        elif request.method == 'POST':
+            add_history=history.addUserHistory(cursor,data,TABLE_HISTORY_NAME,TABLE_USERS_NAME)
+            return add_history
+    else:
+        return {"message": "Request body cannot be empty"}, 400
 
-        points = cursor.fetchall()
-        # print('historyTable: completed')
-        # print(points);
-        users = []
-        for point in points:
-            users.append({
-                'id': point[0],
-                'price': point[1],
-                'phone': point[2],
-                'litres': point[3],
-                'saved': point[4],
-                'creationDate': point[5],
-                'petrolBunkId': point[6],
-                'product': point[7],
-                'city': point[8],
-            })
-        return users;
-    if request.method == 'POST':
-        data1 = request.get_json()
-        price=data1.get('price')
-        phone=data1.get('phone')
-        litres=data1.get('litres')
-        saved=data1.get('saved')
-        petrolBunkId = data1.get('petrolBunkId')
-        product = data1.get('product')
+
+
+# #id SERIAL primary key, phone varchar(100), price float, litres float, saved float     
+# @app.route('/history',methods=['GET','POST'])
+# @jwt_required()
+# def historyTable():
+#     if request.method == 'GET':
+#         phone = request.args.get("phone");
+#         cursor.execute(f"""Select h.id, h.price, h.phone,h.litres, h.saved, h.creationDate, h.petrolBunkId,h.product, p.city from {TABLE_HISTORY_NAME} h  join {TABLE_NAME} p on CAST(h.petrolBunkId AS INTEGER)=p.id where h.phone='{phone}'""")
+
+#         points = cursor.fetchall()
+#         # print('historyTable: completed')
+#         # print(points);
+#         users = []
+#         for point in points:
+#             users.append({
+#                 'id': point[0],
+#                 'price': point[1],
+#                 'phone': point[2],
+#                 'litres': point[3],
+#                 'saved': point[4],
+#                 'creationDate': point[5],
+#                 'petrolBunkId': point[6],
+#                 'product': point[7],
+#                 'city': point[8],
+#             })
+#         return users;
+#     if request.method == 'POST':
+#         data1 = request.get_json()
+#         price=data1.get('price')
+#         phone=data1.get('phone')
+#         litres=data1.get('litres')
+#         saved=data1.get('saved')
+#         petrolBunkId = data1.get('petrolBunkId')
+#         product = data1.get('product')
         
-        x = datetime.datetime.now();
-        creationDate=x.strftime("%x %X");
-        #===
-        cursor.execute(f"""Select  count(name) from {TABLE_USERS_NAME} where phone='{phone}' """)
-        record = cursor.fetchone()
-        # print(record[0]);
-        if(record[0]!=0):
-            cursor.execute(f"""INSERT INTO {TABLE_HISTORY_NAME} (phone, price, litres,saved,creationDate, petrolBunkId,product) VALUES ('{phone}',{price},{litres},{saved}, '{creationDate}', '{petrolBunkId}','{product}' )""");
-            connection.commit();
-            return {"code": 200, "message": "History Saved Successy"};    
-        #==
+#         x = datetime.datetime.now();
+#         creationDate=x.strftime("%x %X");
+#         #===
+#         cursor.execute(f"""Select  count(name) from {TABLE_USERS_NAME} where phone='{phone}' """)
+#         record = cursor.fetchone()
+#         # print(record[0]);
+#         if(record[0]!=0):
+#             cursor.execute(f"""INSERT INTO {TABLE_HISTORY_NAME} (phone, price, litres,saved,creationDate, petrolBunkId,product) VALUES ('{phone}',{price},{litres},{saved}, '{creationDate}', '{petrolBunkId}','{product}' )""");
+#             connection.commit();
+#             return {"code": 200, "message": "History Saved Successy"};    
+#         #==
         
-        return {"code": 400, "message": "User is not Exists."},400
+#         return {"code": 400, "message": "User is not Exists."},400
 
 
 
 @app.route('/deleteHistory',methods=['POST'])
 @jwt_required()
 def deleteHistory():
-    # if(checkHeader(request)==False):
-    #      return {"message": "Token is not invalid"},401;
-    if request.method == 'POST':
-        data1 = request.get_json()
-        phone=data1.get('phone')
-        cursor.execute(f'''delete FROM {TABLE_HISTORY_NAME} where phone='{phone}';''')
-        connection.commit();
-        return {"code": 200, "message": "History Deleted Successfully"}
-
-    return {"code": 400, "message": "History Deleted Failed"},400
+    data = request.get_json()
+    print(data)
+    if not data:
+        return {"code": 400, "message": "Request body cannot be empty"}, 400
+    del_history=history.deleteUserHistory(cursor,data, TABLE_HISTORY_NAME)
+    return del_history
 
     
 #Root endpoint
