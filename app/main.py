@@ -267,6 +267,8 @@ def registerNewUser():
                     return jsonify({"error": "Failed to create token"}), 500
             elif message.get('code', 200) == 200:
                 return jsonify(
+                        access_token=access_token,
+                        refresh_token=refresh_token,
                     message=message.get("message"),
                     code=message.get('code', 200)
                 ), message.get('code', 200)
