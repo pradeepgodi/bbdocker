@@ -29,8 +29,10 @@ def isUserRecordPresent(cursor, phone, TABLE_USERS_NAME):
         return False  # in case of error, assume user does not exist
 
 def addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME):
-    if isUserRecordPresent(cursor, phone, TABLE_USERS_NAME):
-        return  {"code": 200, "message": "User already exists with this phone number.","phone": phone}
+    # if isUserRecordPresent(cursor, phone, TABLE_USERS_NAME):
+    user_record=getUsers(cursor, TABLE_USERS_NAME,phone)
+    if len(user_record) > 0:
+        return  {"code": 200, "message": "User already exists with this phone number.","phone": phone,"user": user_record[0]}
     else:
         try:
             cursor.execute(f"""INSERT INTO {TABLE_USERS_NAME} (name, phone, vehicle_number) VALUES ('{name}', '{phone}','{vehicle_number}')""");

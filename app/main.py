@@ -269,8 +269,9 @@ def registerNewUser():
                 return jsonify(
                         access_token=access_token,
                         refresh_token=refresh_token,
-                    message=message.get("message"),
-                    code=message.get('code', 200)
+                        message=message.get("message"),
+                        user=message.get("user"),
+                        code=message.get('code', 200)
                 ), message.get('code', 200)
         except Exception as e:
             print(f"Error in processing user registration: {e}")
