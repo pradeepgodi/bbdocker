@@ -482,20 +482,20 @@ def checkHeader(request):
 @app.route('/history',methods=['GET','POST'])
 @jwt_required()
 def historyTable():
-    data = request.get_json()
-    if data:
-        if request.method == 'GET':
-            phone=data.get('phone')
-            if not phone:
-                return {"message": "Phone number is required"}, 400
-            else:
-                user_history=history.getUserHistory(cursor,phone,TABLE_HISTORY_NAME, TABLE_NAME)
-                return jsonify(user_history), 200
-        elif request.method == 'POST':
+    if request.method == 'GET':
+        phone = request.args.get('phone')
+        if not phone:
+            return {"message": "Phone number is required"}, 400
+        else:
+            user_history = history.getUserHistory(cursor, str(phone), TABLE_HISTORY_NAME, TABLE_NAME)
+            return jsonify(user_history), 200
+    elif request.method == 'POST':
+        data = request.get_json()
+        if data:
             add_history=history.addUserHistory(cursor,data,TABLE_HISTORY_NAME,TABLE_USERS_NAME)
             return add_history
-    else:
-        return {"message": "Request body cannot be empty"}, 400
+        else:
+            return {"message": "Request body cannot be empty"}, 400
 
 
 
