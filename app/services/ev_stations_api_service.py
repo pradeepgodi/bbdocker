@@ -4,17 +4,11 @@ from shapely.geometry import LineString
 
 
 
-def getEVAlongRouteByPoints(header_validation,cursor, TABLE_EV_STATIONS,data):
-    if not header_validation:
-        return {"message": "Token is not valid"}, 401
-    
-    try:
-        threshold_toll_distance = data['distance_threshold']
-    except KeyError:
-        threshold_toll_distance = 1500
+def getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,lat_long):
+    threshold_toll_distance = 1500
 
     try:    
-        location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in data['points']])
+        location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
       
         # Query the data base for given vehicle type and location 
         cursor.execute(f'''SELECT name,latitude,longitude,phone,address
@@ -28,7 +22,7 @@ def getEVAlongRouteByPoints(header_validation,cursor, TABLE_EV_STATIONS,data):
         for data in nearby_wb:
             temp_dict = {"name":data[0],"latitude":data[1],"longitude":data[2],"phone":data[3],"address":data[4]} 
             nearby_wb_data.append(temp_dict)
-        return nearby_wb_data,200
+        return nearby_wb_data
     except Exception as e:
         print(str(e))
         return {"message": "Internal Server Error"}, 500  

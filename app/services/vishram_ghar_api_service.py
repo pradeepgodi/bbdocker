@@ -67,17 +67,10 @@ def getNearbyVishramGhars(header_validation,cursor, TABLE_VISHRAM_GHAR,data):
         return {"error": str(e)}, 500
 
 
-def getVishramGharAlongRouteByPoints(header_validation,cursor, TABLE_VISHRAM_GHAR,data):
-    if not header_validation:
-        return {"message": "Token is not valid"}, 401
-    
-    try:
-        threshold_toll_distance = data['distance_threshold']
-    except KeyError:
-        threshold_toll_distance = 1500
-
+def getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,lat_long):
+    threshold_toll_distance = 1500
     try:    
-        location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in data['points']])
+        location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
       
         # Query the data base for given vehicle type and location 
         cursor.execute(f'''SELECT omc,code,name,area,latitude,longitude

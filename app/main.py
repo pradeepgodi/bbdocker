@@ -24,6 +24,7 @@ import services.low_fuel_api_service as lowfuel
 import services.users_api_service as user
 import services.vishram_ghar_api_service as ghar
 import services.history_api_service as history
+import services.google_api_service as google_api
 
 
 from urllib.request import urlopen 
@@ -51,6 +52,7 @@ cursor = connection.cursor()
 ## JWT Configuration
 # Set the JWT access and refresh token expiration times
 # You can adjust these values as per your requirements.
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY") 
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY", os.urandom(32).hex()) # REPLACE THIS IN PRODUCTION!
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=int(os.environ.get("ACCESS_TOKEN_EXPIRY_HOURS"))) # Access tokens expire in 1 hour
 app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=int(os.environ.get("REFRESH_TOKEN_EXPIRY_DAYS"))) # Refresh tokens expire in 30 days
@@ -156,7 +158,40 @@ def tollsAlongRouteByPoint():
     header_validation=True
     data = request.get_json()
     return toll.getTollsAlongRouteByPoint(header_validation,cursor, TABLE_TOLL_PLAZA,data)
-    
+
+@app.route('/tollsAlongRoute',methods=['POST'])
+@jwt_required()
+def tollsAlongtheRoute():
+    data= request.get_json()
+    try:    
+        if not data or 'source' not in data or 'destination' not in data:
+            return {"message": "Source and destination are required"}, 400    
+        source=data.get('source')
+        destination=data.get('destination') 
+        vehicle_type=data['vehicle_type']
+        if not source or not destination or not vehicle_type:
+            return {"message": "Source, destination and vehicle type are required"}, 400        
+        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best or not alternate:
+            return {"message": "Failed to fetch routes from Google API"}, 500
+        
+        best_routes=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,best.get('lat_long', []))
+        alternate_routes=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,alternate.get('lat_long', []))
+
+        routes = {"best": {"summary": best.get('summary', ''),
+                    "overview_polyline_points": best.get('overview_polyline_points', ''),
+                    "toll_plazas": best_routes} , 
+            "alternate": {"summary": alternate.get('summary', ''),
+                    "overview_polyline_points": alternate.get('overview_polyline_points', ''),
+                    "toll_plazas": alternate_routes}}
+
+        return jsonify(routes),200 
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"}, 400
+
+
+
 @app.route('/tollVehicleTypes',methods=['GET'])
 # @jwt_required()
 def tollVehicleTypes():
@@ -178,6 +213,36 @@ def getCNGStations():
      data = request.get_json()
      return cng.get_nearby_cng_stations(header_validation,cursor, TABLE_CNG_STATIONS,data)
 
+@app.route('/cngStationsAlongRoute',methods=['POST'])
+@jwt_required()
+def cngAlongtheRoute():
+    data = request.get_json()
+    try:    
+        if not data or 'source' not in data or 'destination' not in data:
+            return {"message": "Source and destination are required"}, 400    
+        source=data.get('source')
+        destination=data.get('destination') 
+        if not source or not destination:
+            return {"message": "Source and destination are required"}, 400
+        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best or not alternate:
+            return {"message": "Failed to fetch routes from Google API"}, 500
+        best_routes=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,best.get('lat_long', []))
+        alternate_routes=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,alternate.get('lat_long', []))
+
+        routes = {"best": {"summary": best.get('summary', ''),
+                          "overview_polyline_points": best.get('overview_polyline_points', ''),
+                          "cng_stations": best_routes} , 
+
+                    "alternate": {"summary": alternate.get('summary', ''),
+                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
+                          "cng_stations": alternate_routes}}
+        return jsonify(routes),200
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"}, 400
+
+
 @app.route('/cngAlongRouteByPoints',methods=['POST'])
 @jwt_required() 
 def cngAlongRoute():
@@ -192,7 +257,38 @@ def getEVStations():
     header_validation=True
     data = request.get_json()
     return ev.get_nearby_ev_stations(header_validation,cursor, TABLE_EV_STATIONS,data)
-     
+
+@app.route('/evStationsAlongRoute',methods=['POST'])
+@jwt_required()
+def evStationsAlongtheRoute():
+    data = request.get_json()
+    try:    
+        if not data or 'source' not in data or 'destination' not in data:
+            return {"message": "Source and destination are required"}, 400    
+        source=data.get('source')
+        destination=data.get('destination') 
+        if not source or not destination:
+            return {"message": "Source and destination are required"}, 400
+        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best or not alternate:
+            return {"message": "Failed to fetch routes from Google API"}, 500
+        best_routes=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,best.get('lat_long', []))
+        alternate_routes=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,alternate.get('lat_long', []))
+
+        routes = {"best": {"summary": best.get('summary', ''),
+                          "overview_polyline_points": best.get('overview_polyline_points', ''),
+                          "ev_stations": best_routes} , 
+                    "alternate": {"summary": alternate.get('summary', ''),
+                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
+                          "ev_stations": alternate_routes}}
+        return jsonify(routes),200
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"}, 400
+
+
+
+
 @app.route('/evAlongRouteByPoints',methods=['POST'])
 @jwt_required()
 def evStationsAlongRoute():
@@ -211,6 +307,42 @@ def getProductById():
         return jsonify(products),200
     else:
         return jsonify({'id': id, "message": "Product Not Found"}),400
+
+@app.route('/fuelStationsAlongRoute',methods=['POST'])
+@jwt_required()
+def fuelStations():
+    try:
+        data= request.get_json()
+        source=data.get('source')
+        destination=data.get('destination') 
+        product=data.get('product')  # 'petrol' or 'diesel'
+        if not source or not destination or not product:
+            return {"message": "Source, destination and fuel type are required"}, 400
+        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best or not alternate:
+            return {"message": "Failed to fetch routes from Google API"}, 500
+
+        best_routes=lowfuel.getNearbyFuelStations(best.get('lat_long', []),product,cursor,TABLE_NAME)
+        alternate_routes=lowfuel.getNearbyFuelStations(alternate.get('lat_long', []),product,cursor,TABLE_NAME)
+
+        routes = {"best": {"summary": best.get('summary', ''),
+                          "distance": best.get('distance', ''),
+                          "duration": best.get('duration', ''),
+                          "overview_polyline_points": best.get('overview_polyline_points', ''),
+                          "fuel_stations": best_routes} , 
+
+                    "alternate": {"summary": alternate.get('summary', ''),
+                          "distance": alternate.get('distance', ''),
+                          "duration": alternate.get('duration', ''),
+                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
+                          "fuel_stations": alternate_routes}}
+
+        return jsonify(routes),200 
+
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"},400;   
+
 
 @app.route('/productsNearByPoints',methods=['POST'])
 @jwt_required()
@@ -286,6 +418,39 @@ def registerNewUser():
 def nearby_vishram_ghars():
     data = request.get_json()
     return ghar.getNearbyVishramGhars(True,cursor, TABLE_VISHRAM_GHAR,data)
+
+
+@app.route('/vishramGharAlongRoute',methods=['POST'])
+@jwt_required()
+def vishramGharAlongroute():
+    data = request.get_json()
+    try:    
+        if not data or 'source' not in data or 'destination' not in data:
+            return {"message": "Source and destination are required"}, 400    
+        source=data.get('source')
+        destination=data.get('destination') 
+        if not source or not destination:
+            return {"message": "Source and destination are required"}, 400
+        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best or not alternate:
+            return {"message": "Failed to fetch routes from Google API"}, 500
+        best_routes=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,best.get('lat_long', []))
+        alternate_routes=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,alternate.get('lat_long', []))
+
+        routes = {"best": {"summary": best.get('summary', ''),
+                          "overview_polyline_points": best.get('overview_polyline_points', ''),
+                          "vishram_ghars": best_routes} , 
+
+                    "alternate": {"summary": alternate.get('summary', ''),
+                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
+                          "vishram_ghars": alternate_routes}}
+        return jsonify(routes),200
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"}, 400
+
+
+
 
 @app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
 @jwt_required()
