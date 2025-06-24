@@ -178,10 +178,10 @@ def tollsAlongtheRoute():
         best_routes=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,best.get('lat_long', []))
         alternate_routes=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,alternate.get('lat_long', []))
 
-        routes = {"best": {"summary": best.get('summary', ''),
+        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
                     "overview_polyline_points": best.get('overview_polyline_points', ''),
                     "toll_plazas": best_routes} , 
-            "alternate": {"summary": alternate.get('summary', ''),
+            "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
                     "overview_polyline_points": alternate.get('overview_polyline_points', ''),
                     "toll_plazas": alternate_routes}}
 
@@ -230,11 +230,11 @@ def cngAlongtheRoute():
         best_routes=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,best.get('lat_long', []))
         alternate_routes=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,alternate.get('lat_long', []))
 
-        routes = {"best": {"summary": best.get('summary', ''),
+        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
                           "overview_polyline_points": best.get('overview_polyline_points', ''),
                           "cng_stations": best_routes} , 
 
-                    "alternate": {"summary": alternate.get('summary', ''),
+                    "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
                           "overview_polyline_points": alternate.get('overview_polyline_points', ''),
                           "cng_stations": alternate_routes}}
         return jsonify(routes),200
@@ -275,10 +275,10 @@ def evStationsAlongtheRoute():
         best_routes=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,best.get('lat_long', []))
         alternate_routes=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,alternate.get('lat_long', []))
 
-        routes = {"best": {"summary": best.get('summary', ''),
+        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
                           "overview_polyline_points": best.get('overview_polyline_points', ''),
                           "ev_stations": best_routes} , 
-                    "alternate": {"summary": alternate.get('summary', ''),
+                    "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
                           "overview_polyline_points": alternate.get('overview_polyline_points', ''),
                           "ev_stations": alternate_routes}}
         return jsonify(routes),200
@@ -437,11 +437,11 @@ def vishramGharAlongroute():
         best_routes=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,best.get('lat_long', []))
         alternate_routes=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,alternate.get('lat_long', []))
 
-        routes = {"best": {"summary": best.get('summary', ''),
+        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
                           "overview_polyline_points": best.get('overview_polyline_points', ''),
                           "vishram_ghars": best_routes} , 
 
-                    "alternate": {"summary": alternate.get('summary', ''),
+                    "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
                           "overview_polyline_points": alternate.get('overview_polyline_points', ''),
                           "vishram_ghars": alternate_routes}}
         return jsonify(routes),200
