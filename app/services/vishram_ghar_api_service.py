@@ -1,6 +1,7 @@
 from flask import jsonify
 from collections import defaultdict
 from shapely.geometry import LineString
+import os
 
 
 def getNearbyVishramGhars(header_validation,cursor, TABLE_VISHRAM_GHAR,data):
@@ -68,14 +69,16 @@ def getNearbyVishramGhars(header_validation,cursor, TABLE_VISHRAM_GHAR,data):
 
 
 def getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,lat_long):
-    threshold_toll_distance = 1500
+    # threshold_toll_distance = 1500
+    THRESHOLD_DISTANCE=os.environ.get("THRESHOLD_DISTANCE") 
     try:    
-        location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
+        # location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
+        location_lines=LineString(lat_long)
       
         # Query the data base for given vehicle type and location 
         cursor.execute(f'''SELECT omc,code,name,area,latitude,longitude
                          FROM {TABLE_VISHRAM_GHAR} WHERE ST_DWithin(location::geography, 
-                         ST_SetSRID(ST_GeomFromText(%s),4326), {threshold_toll_distance})''', (location_lines.wkt,))
+                         ST_SetSRID(ST_GeomFromText(%s),4326), {THRESHOLD_DISTANCE})''', (location_lines.wkt,))
 
         nearby_wb = cursor.fetchall()
 

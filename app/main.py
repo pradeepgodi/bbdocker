@@ -150,6 +150,29 @@ def refresh_token():
         return jsonify({"error": "Failed to refresh token"}), 500
 
 
+def prepareMapsServiceResponse(best_route,alternate_route,best_route_locations,alternate_route_locations):
+    """
+    Prepares the response for the Maps Service API.
+    Combines best and alternate route information
+    """
+    routes = {
+        "best": {
+            "summary": best_route.get('summary', ''),
+            "distance": best_route.get('distance', ''),
+            "duration": best_route.get('duration', ''),
+            "polyline_points": best_route.get('polyline_points', []),
+            "locations": best_route_locations
+        },
+        "alternate": {
+            "summary": alternate_route.get('summary', ''),
+            "distance": alternate_route.get('distance', ''),
+            "duration": alternate_route.get('duration', ''),
+            "polyline_points": alternate_route.get('polyline_points', []),
+            "locations": alternate_route_locations
+        }
+    }
+    return routes
+
 
 # Toll Plaza APIs
 @app.route('/tollsAlongRouteByPoints',methods=['POST'])
@@ -170,20 +193,16 @@ def tollsAlongtheRoute():
         destination=data.get('destination') 
         vehicle_type=data['vehicle_type']
         if not source or not destination or not vehicle_type:
-            return {"message": "Source, destination and vehicle type are required"}, 400        
-        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
-        if not best or not alternate:
+            return {"message": "Source, destination and vehicle type are required"}, 400     
+           
+        best_route,alternate_route = google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best_route or not alternate_route:
             return {"message": "Failed to fetch routes from Google API"}, 500
         
-        best_routes=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,best.get('lat_long', []))
-        alternate_routes=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,alternate.get('lat_long', []))
-
-        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
-                    "overview_polyline_points": best.get('overview_polyline_points', ''),
-                    "toll_plazas": best_routes} , 
-            "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
-                    "overview_polyline_points": alternate.get('overview_polyline_points', ''),
-                    "toll_plazas": alternate_routes}}
+        best_route_locations=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,best_route.get('route_points', []))
+        alternate_route_locations=toll.getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA,vehicle_type,alternate_route.get('route_points', []))
+ 
+        routes= prepareMapsServiceResponse(best_route, alternate_route, best_route_locations, alternate_route_locations)
 
         return jsonify(routes),200 
     except Exception as e:
@@ -203,15 +222,14 @@ def tollVehicleTypes():
 @jwt_required() 
 def get_nearby_weigh_bridges():
     data = request.get_json()
-    return nwb.get_nearby_weigh_bridges(True,cursor, TABLE_WEIGH_BRIDGE_NEARBY,data)
+    return nwb.get_nearby_weigh_bridges(cursor, TABLE_WEIGH_BRIDGE_NEARBY,data)
 
 # CNG stations APIs
 @app.route('/nearbyCNGStations',methods=['POST'])
 @jwt_required() 
 def getCNGStations():
-     header_validation=True
      data = request.get_json()
-     return cng.get_nearby_cng_stations(header_validation,cursor, TABLE_CNG_STATIONS,data)
+     return cng.get_nearby_cng_stations(cursor, TABLE_CNG_STATIONS,data)
 
 @app.route('/cngStationsAlongRoute',methods=['POST'])
 @jwt_required()
@@ -224,19 +242,12 @@ def cngAlongtheRoute():
         destination=data.get('destination') 
         if not source or not destination:
             return {"message": "Source and destination are required"}, 400
-        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
-        if not best or not alternate:
+        best_route,alternate_route=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best_route or not alternate_route:
             return {"message": "Failed to fetch routes from Google API"}, 500
-        best_routes=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,best.get('lat_long', []))
-        alternate_routes=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,alternate.get('lat_long', []))
-
-        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
-                          "overview_polyline_points": best.get('overview_polyline_points', ''),
-                          "cng_stations": best_routes} , 
-
-                    "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
-                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
-                          "cng_stations": alternate_routes}}
+        best_route_locations=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,best_route.get('route_points', []))
+        alternate_route_locations=cng.getCngAlongRouteByPoints(cursor, TABLE_CNG_STATIONS,alternate_route.get('route_points', []))
+        routes= prepareMapsServiceResponse(best_route, alternate_route, best_route_locations, alternate_route_locations)
         return jsonify(routes),200
     except Exception as e:
         print(str(e))
@@ -269,18 +280,15 @@ def evStationsAlongtheRoute():
         destination=data.get('destination') 
         if not source or not destination:
             return {"message": "Source and destination are required"}, 400
-        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
-        if not best or not alternate:
+        
+        best_route,alternate_route=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best_route or not alternate_route:
             return {"message": "Failed to fetch routes from Google API"}, 500
-        best_routes=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,best.get('lat_long', []))
-        alternate_routes=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,alternate.get('lat_long', []))
+        
+        best_route_locations=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,best_route.get('route_points', []))
+        alternate_route_locations=ev.getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,alternate_route.get('route_points', []))
+        routes= prepareMapsServiceResponse(best_route, alternate_route, best_route_locations, alternate_route_locations)
 
-        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
-                          "overview_polyline_points": best.get('overview_polyline_points', ''),
-                          "ev_stations": best_routes} , 
-                    "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
-                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
-                          "ev_stations": alternate_routes}}
         return jsonify(routes),200
     except Exception as e:
         print(str(e))
@@ -318,27 +326,14 @@ def fuelStations():
         product=data.get('product')  # 'petrol' or 'diesel'
         if not source or not destination or not product:
             return {"message": "Source, destination and fuel type are required"}, 400
-        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
-        if not best or not alternate:
+        best_route,alternate_route=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best_route or not alternate_route:
             return {"message": "Failed to fetch routes from Google API"}, 500
 
-        best_routes=lowfuel.getNearbyFuelStations(best.get('lat_long', []),product,cursor,TABLE_NAME)
-        alternate_routes=lowfuel.getNearbyFuelStations(alternate.get('lat_long', []),product,cursor,TABLE_NAME)
-
-        routes = {"best": {"summary": best.get('summary', ''),
-                          "distance": best.get('distance', ''),
-                          "duration": best.get('duration', ''),
-                          "overview_polyline_points": best.get('overview_polyline_points', ''),
-                          "fuel_stations": best_routes} , 
-
-                    "alternate": {"summary": alternate.get('summary', ''),
-                          "distance": alternate.get('distance', ''),
-                          "duration": alternate.get('duration', ''),
-                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
-                          "fuel_stations": alternate_routes}}
-
+        best_route_locations=lowfuel.getNearbyFuelStations(best_route.get('route_points', []),product,cursor,TABLE_NAME)
+        alternate_route_locations=lowfuel.getNearbyFuelStations(alternate_route.get('route_points', []),product,cursor,TABLE_NAME)
+        routes= prepareMapsServiceResponse(best_route, alternate_route, best_route_locations, alternate_route_locations)
         return jsonify(routes),200 
-
     except Exception as e:
         print(str(e))
         return {"message": "Invalid request data"},400;   
@@ -431,25 +426,16 @@ def vishramGharAlongroute():
         destination=data.get('destination') 
         if not source or not destination:
             return {"message": "Source and destination are required"}, 400
-        best,alternate=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
-        if not best or not alternate:
+        best_route,alternate_route=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best_route or not alternate_route:
             return {"message": "Failed to fetch routes from Google API"}, 500
-        best_routes=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,best.get('lat_long', []))
-        alternate_routes=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,alternate.get('lat_long', []))
-
-        routes = {"best": {"summary": best.get('summary', ''),"distance": best.get('distance', ''),"duration": best.get('duration', ''),
-                          "overview_polyline_points": best.get('overview_polyline_points', ''),
-                          "vishram_ghars": best_routes} , 
-
-                    "alternate": {"summary": alternate.get('summary', ''),"distance": alternate.get('distance', ''),"duration": alternate.get('duration', ''),
-                          "overview_polyline_points": alternate.get('overview_polyline_points', ''),
-                          "vishram_ghars": alternate_routes}}
+        best_route_locations=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,best_route.get('route_points', []))
+        alternate_route_locations=ghar.getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,alternate_route.get('route_points', []))
+        routes= prepareMapsServiceResponse(best_route, alternate_route, best_route_locations, alternate_route_locations)
         return jsonify(routes),200
     except Exception as e:
         print(str(e))
         return {"message": "Invalid request data"}, 400
-
-
 
 
 @app.route('/vishramGharAlongRouteByPoints',methods=['POST'])

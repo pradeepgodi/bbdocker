@@ -1,13 +1,22 @@
 from shapely.geometry import LineString
 from flask import jsonify
+import os
 
-
-def getNearbyFuelStations(routePoints,productType,cursor,TABLE_NAME):
+def getNearbyFuelStations(lat_long,productType,cursor,TABLE_NAME):
     try:
         nearby_points = []
-        line = LineString([(coord['longitude'],coord['latitude']) for coord in routePoints])
-        cursor.execute(f"""Select distinct city, price,latitude, longitude, product,id from {TABLE_NAME} where product='{productType}' and ST_DWithin(location::geography, ST_SetSRID(ST_GeomFromText(%s),4326), 200)""", (line.wkt,))
+        # line = LineString([(coord['longitude'],coord['latitude']) for coord in routePoints])
+        location_lines=LineString(lat_long)
+        # print("line.wkt =",line.wkt)
+        THRESHOLD_DISTANCE=os.environ.get("THRESHOLD_DISTANCE") 
+        
+
+        cursor.execute(f"""Select distinct city, price,latitude, longitude, product,id 
+                            from {TABLE_NAME} where product='{productType}' and 
+                            ST_DWithin(location::geography, ST_SetSRID(ST_GeomFromText(%s),4326), {THRESHOLD_DISTANCE})""", (location_lines.wkt,))
         points = cursor.fetchall()
+        # print('get_nearyby_points: completed')
+        # print(points);
         
         for point in points:
             # point_gem= loads(point[4]);

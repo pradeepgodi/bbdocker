@@ -4,9 +4,7 @@ from flask import jsonify
 
 
 
-def get_nearby_weigh_bridges(header_validation,cursor, TABLE_WEIGH_BRIDGE_NEARBY,data):
-    if not header_validation:
-        return {"message": "Token is not valid"}, 401
+def get_nearby_weigh_bridges(cursor, TABLE_WEIGH_BRIDGE_NEARBY,data):
     try:
         # Extract latitude and longitude from the input data
         current_latitude = float(data['latitude'])
@@ -31,9 +29,6 @@ def get_nearby_weigh_bridges(header_validation,cursor, TABLE_WEIGH_BRIDGE_NEARBY
                     WHERE ST_DistanceSphere(ST_MakePoint(longitude, latitude), ST_MakePoint(%s, %s)) <= 50000
                     ORDER BY distance_meters;
                 """
- 
-
-        
         params = (
                     current_longitude, current_latitude,
                     current_longitude, current_latitude,

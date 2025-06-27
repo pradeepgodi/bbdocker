@@ -1,19 +1,22 @@
 from flask import jsonify
 from collections import defaultdict
 from shapely.geometry import LineString
+import os
 
 
 
 def getEVAlongRouteByPoints(cursor, TABLE_EV_STATIONS,lat_long):
-    threshold_toll_distance = 1500
+    # threshold_toll_distance = 1500
+    THRESHOLD_DISTANCE=os.environ.get("THRESHOLD_DISTANCE") 
 
     try:    
-        location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
+        # location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
+        location_lines=LineString(lat_long)
       
         # Query the data base for given vehicle type and location 
         cursor.execute(f'''SELECT name,latitude,longitude,phone,address
                          FROM {TABLE_EV_STATIONS} WHERE ST_DWithin(location::geography, 
-                         ST_SetSRID(ST_GeomFromText(%s),4326), {threshold_toll_distance})''', (location_lines.wkt,))
+                         ST_SetSRID(ST_GeomFromText(%s),4326), {THRESHOLD_DISTANCE})''', (location_lines.wkt,))
         
         # Fetch all rows from database
         nearby_wb = cursor.fetchall()

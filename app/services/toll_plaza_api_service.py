@@ -1,4 +1,5 @@
 from shapely.geometry import LineString
+import os
 
 
 
@@ -17,22 +18,13 @@ def getTollVehicleTypes(header_validation):
                 {"id":7,"name": "7 or more Axle","value":"7_or_more_axle"}], 200
 
 def getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA, vehicle_type,lat_long):
-    # This function retrieves toll plaza information along a route based on given points.
-    # It takes four parameters: header_validation for validating the request headers,
-    # cursor for executing database queries, TABLE_TOLL_PLAZA as the name of the table containing toll plaza data,
-    # and data which includes the input points to determine the route.
-
     # try:
     #     threshold_toll_distance = data['distance_threshold']
     # except KeyError:
-    threshold_toll_distance = 1500
+    THRESHOLD_DISTANCE=os.environ.get("THRESHOLD_DISTANCE") 
     # Default distance threshold is set to 1000 meters if not provided in the request body.
-
-    """
-    Valid Vehicle type (any one) that should be passed in the request body:
-        car_jeep_van,4_to_6_axle,7_or_more_axle, bus_truck, hcm_eme,lcv,upto_3_axle_vehicle"""
-    
-    location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
+    # location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in lat_long])
+    location_lines=LineString(lat_long)
 
     # select the coulmn name for Single Journey price in the table based on vehicle type
     query_car_jeep_van = "car_jeep_van_single_journey" 
@@ -70,7 +62,7 @@ def getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA, vehicle_type,lat_long):
         # Query the data base for given vehicle type and location 
         cursor.execute(f'''SELECT toll_plaza_id,toll_plaza_name,latitude,longitude,{query}
                             FROM {TABLE_TOLL_PLAZA} WHERE ST_DWithin(location::geography, 
-                            ST_SetSRID(ST_GeomFromText(%s),4326), {threshold_toll_distance})''', (location_lines.wkt,))
+                            ST_SetSRID(ST_GeomFromText(%s),4326), {THRESHOLD_DISTANCE})''', (location_lines.wkt,))
         
         # Fetch all rows from database
         nearby_tolls = cursor.fetchall()
@@ -78,7 +70,6 @@ def getTollsAlongRouteByPoint(cursor, TABLE_TOLL_PLAZA, vehicle_type,lat_long):
         for data in nearby_tolls:
             temp_dict = {"toll_plaza_name":data[1],"toll_plaza_id":int(data[0]),"latitude":data[2],"longitude":data[3],"toll_fee":data[4] }
             nearby_tolls_data.append(temp_dict)
-        # print(nearby_tolls_data)
         return nearby_tolls_data
     except Exception as e:
         print(f"Error in getTollsAlongRouteByPoint: {str(e)}")
