@@ -1,7 +1,23 @@
 CREATE EXTENSION IF NOT EXISTS postgis;
 
+-- challan table sql queries
+CREATE TABLE challans (
+	state VARCHAR(100),
+    ViolationDescription VARCHAR(255) ,
+    Fine2Wheeler INTEGER ,
+    Fine3Wheeler INTEGER,
+    FineLMV INTEGER  ,
+    FineMGVandHGV INTEGER,
+    DisplayEnabled BOOLEAN DEFAULT FALSE);
+
+COPY challans(state, ViolationDescription, Fine2Wheeler, Fine3Wheeler, FineLMV, FineMGVandHGV, DisplayEnabled)
+FROM '/docker-entrypoint-initdb.d/traffic_violation_data.csv'
+DELIMITER ','
+CSV HEADER;
+
 
 -- vishram ghar outlets
+
 CREATE TABLE vishram_ghar (
     omc TEXT,
     code TEXT,

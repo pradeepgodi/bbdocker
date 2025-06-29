@@ -1,0 +1,420 @@
+State,ViolationDescription,Fine2Wheeler,Fine3Wheeler,FineLMV,FineMGVandHGV,DisplayEnabled
+Karnataka,Over Speeding,1000,1000,1000,1000,YES
+Karnataka,Using Mobile Phone While Driving,1500,1500,3000,5000,YES
+Karnataka,Riding Without Helmet,500,0,0,0,YES
+Karnataka,Driving Without Seat Belt,0,0,500,500,YES
+Karnataka,Driving/Riding Without License,1000,2000,2000,5000,YES
+Karnataka,Shrill Horn,500,500,500,500,NO
+Karnataka,FreeWheeling,500,500,500,500,NO
+Karnataka,Lane InDiscipline ,500,500,500,500,YES
+Karnataka,No Entry,500,500,500,500,YES
+Karnataka,Triple Riding,1000,0,0,0,YES
+Karnataka,Defective Register No. Plate,500,500,500,500,YES
+Karnataka,Using Horn At Prohibited Places ,500,500,500,500,YES
+Karnataka,Defective Silencer,500,500,500,500,NO
+Karnataka,Jumping Traffic Signal,500,500,500,500,YES
+Karnataka,Wrong Parking/No Parking,1000,1000,1000,1000,YES
+Andhra Pradesh,Over Speeding,1000,1000,1000,2000,YES
+Andhra Pradesh,Using Mobile Phone While Driving,5000,5000,5000,5000,YES
+Andhra Pradesh,Riding Without Helmet,1000,0,0,0,YES
+Andhra Pradesh,Driving Without Seat Belt,0,0,1000,1000,YES
+Andhra Pradesh,Driving/Riding Without License,5000,5000,5000,10000,YES
+Andhra Pradesh,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Andhra Pradesh,Drunk And Drive,2000,2000,2000,2000,YES
+Andhra Pradesh,Driving In Wrong Side,1000,1000,1000,5000,NO
+Andhra Pradesh,No Entry,1000,1000,1000,5000,YES
+Andhra Pradesh,Triple Riding,1000,0,0,0,YES
+Andhra Pradesh,Defective Register No. Plate,5000,5000,5000,10000,YES
+Andhra Pradesh,Using Horn At Prohibited Places ,1000,1000,1000,4000,YES
+Andhra Pradesh,Defective Silencer,1000,1000,1000,5000,NO
+Andhra Pradesh,Jumping Traffic Signal,5000,5000,5000,10000,YES
+Andhra Pradesh,Wrong Parking/No Parking,1000,1000,1000,1000,YES
+Maharashtra,Over Speeding,1000,1000,1000,2000,YES
+Maharashtra,Using Mobile Phone While Driving,5000,5000,5000,5000,YES
+Maharashtra,Riding Without Helmet,1000,0,0,0,YES
+Maharashtra,Driving Without Seat Belt,0,0,1000,1000,YES
+Maharashtra,Driving/Riding Without License,5000,5000,5000,5000,YES
+Maharashtra,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Maharashtra,Drunk And Drive,10000,10000,10000,15000,YES
+Maharashtra,Driving In Wrong Side,1000,1000,1000,5000,NO
+Maharashtra,No Entry,1000,1000,2000,5000,YES
+Maharashtra,Triple Riding,1000,0,0,0,YES
+Maharashtra,Defective Register No. Plate,500,500,500,5000,YES
+Maharashtra,Using Horn At Prohibited Places ,1500,1500,4000,7000,YES
+Maharashtra,Driving Without Registration,2000,2000,2000,5000,NO
+Maharashtra,Jumping Traffic Signal,5000,5000,5000,10000,YES
+Maharashtra,Wrong Parking/No Parking,500,500,500,2000,YES
+Telangana,Over Speeding,1000,1000,1000,2000,YES
+Telangana,Using Mobile Phone While Driving,1000,1000,1000,1000,YES
+Telangana,Riding Without Helmet,200,0,0,0,YES
+Telangana,Driving Without Seat Belt,0,0,1000,1000,YES
+Telangana,Driving/Riding Without License,5000,5000,5000,10000,YES
+Telangana,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Telangana,Drunk And Drive,10000,10000,10000,15000,YES
+Telangana,Driving In Wrong Side,200,200,700,700,NO
+Telangana,No Entry,200,200,500,1000,YES
+Telangana,Triple Riding,200,200,300,1000,YES
+Telangana,Defective Register No. Plate,200,200,200,200,YES
+Telangana,Using Horn At Prohibited Places ,100,100,100,500,YES
+Telangana,Driving Without Registration,2000,2000,2000,2000,NO
+Telangana,Jumping Traffic Signal,1000,1000,1000,1000,YES
+Telangana,Wrong Parking/No Parking,200,200,200,200,YES
+Goa,Over Speeding,1500,2000,2000,4000,YES
+Goa,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Goa,Riding Without Helmet,500,0,0,0,YES
+Goa,Driving Without Seat Belt,0,0,500,500,YES
+Goa,Driving/Riding Without License,2000,2000,2000,3000,YES
+Goa,Breaching Stipulated Pollution Standards,1000,3000,3000,3000,NO
+Goa,Drunk And Drive,10000,10000,10000,20000,YES
+Goa,Driving In Wrong Side,1500,3000,3000,5000,NO
+Goa,No Entry,1500,3000,3000,5000,YES
+Goa,Triple Riding,200,0,0,0,YES
+Goa,Driving in NMV lanes,1500,3000,3000,5000,NO
+Goa,Smoking While Driving,200,200,200,200,NO
+Goa,Driving Without Registration,1000,2000,3000,5000,NO
+Goa,Jumping Traffic Signal,5000,5000,5000,10000,YES
+Goa,Wrong Parking/No Parking,1500,3000,3000,5000,YES
+Madhya Pradesh,Over Speeding,400,400,400,400,YES
+Madhya Pradesh,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Madhya Pradesh,Riding Without Helmet,1000,0,0,0,YES
+Madhya Pradesh,Driving Without Seat Belt,0,0,1000,1000,YES
+Madhya Pradesh,Driving/Riding Without License,5000,5000,5000,5000,YES
+Madhya Pradesh,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Madhya Pradesh,Drunk And Drive,2000,2000,2000,2000,YES
+Madhya Pradesh,Driving In Wrong Side,1000,1000,1000,1000,NO
+Madhya Pradesh,No Entry,1500,3000,3000,5000,YES
+Madhya Pradesh,Triple Riding,1000,0,0,0,YES
+Madhya Pradesh,Driving in NMV lanes,20000,20000,20000,20000,NO
+Madhya Pradesh,Wrong Passing,1000,1000,1000,1000,NO
+Madhya Pradesh,Driving Without Registration,100,100,100,100,NO
+Madhya Pradesh,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Madhya Pradesh,Wrong Parking/No Parking,500,500,500,1000,YES
+Tamilnadu,Over Speeding,5000,5000,5000,10000,YES
+Tamilnadu,Using Mobile Phone While Driving,1000,1000,1000,1000,YES
+Tamilnadu,Riding Without Helmet,1000,0,0,0,YES
+Tamilnadu,Driving Without Seat Belt,0,1000,1000,1000,YES
+Tamilnadu,Driving/Riding Without License,5000,5000,5000,5000,YES
+Tamilnadu,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Tamilnadu,Drunk And Drive,10000,10000,10000,10000,YES
+Tamilnadu,Driving In Wrong Side,1100,1100,1100,1500,NO
+Tamilnadu,No Entry,2000,2000,2000,5000,YES
+Tamilnadu,Using High Beam Unnecessarily,100,100,100,500,NO
+Tamilnadu,Loud Horns,500,500,500,500,NO
+Tamilnadu,Driving without a Silencer,100,100,100,500,NO
+Tamilnadu,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Tamilnadu,Jumping Traffic Signal,1000,1000,1000,1000,YES
+Tamilnadu,Wrong Parking/No Parking,500,500,1000,2000,YES
+Punjab,Over Speeding,1000,1000,1000,2000,YES
+Punjab,Using Mobile Phone While Driving,2000,2000,2000,5000,YES
+Punjab,Riding Without Helmet,1000,0,0,0,YES
+Punjab,Driving Without Seat Belt,0,0,1000,1000,YES
+Punjab,Driving/Riding Without License,5000,5000,5000,5000,YES
+Punjab,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Punjab,Drunk And Drive,2000,2000,2000,5000,YES
+Punjab,Smoking While Driving,500,500,500,500,NO
+Punjab,No Entry,500,500,500,1000,YES
+Punjab,Over boarding Passengers,1000,200,200,200,NO
+Punjab,Vehicles Without Permit,10000,10000,10000,10000,NO
+Punjab,Using Horn At Prohibited Places ,1000,1000,1000,1000,YES
+Punjab,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Punjab,Jumping Traffic Signal,500,500,500,1000,YES
+Punjab,Wrong Parking/No Parking,500,500,500,1000,YES
+Uttar Pradesh,Over Speeding,1000,1000,1000,2000,YES
+Uttar Pradesh,Using Mobile Phone While Driving,1000,1000,1000,1000,YES
+Uttar Pradesh,Riding Without Helmet,1000,0,0,0,YES
+Uttar Pradesh,Driving Without Seat Belt,0,0,1000,1000,YES
+Uttar Pradesh,Driving/Riding Without License,5000,5000,5000,5000,YES
+Uttar Pradesh,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Uttar Pradesh,Drunk And Drive,10000,10000,10000,10000,YES
+Uttar Pradesh,Driving in NMV lanes,2000,2000,2000,5000,NO
+Uttar Pradesh,Driving without indicator,500,500,500,1000,NO
+Uttar Pradesh,Wrong Side Riding/Driving,500,500,500,1000,NO
+Uttar Pradesh,Over Taking Other Vehicles,1000,1000,1000,1000,NO
+Uttar Pradesh,Using Horn At Prohibited Places ,500,500,500,500,YES
+Uttar Pradesh,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Uttar Pradesh,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Uttar Pradesh,Triple Riding,1000,0,0,0,YES
+Haryana,Over Speeding,2000,2000,2000,4000,YES
+Haryana,Using Mobile Phone While Driving,5000,5000,5000,5000,YES
+Haryana,Riding Without Helmet,1000,0,0,0,YES
+Haryana,Driving Without Seat Belt,0,0,1000,1000,YES
+Haryana,Driving/Riding Without License,5000,5000,5000,5000,YES
+Haryana,Shrill Horn,2000,2000,2000,2000,NO
+Haryana,Dangerous Driving,5000,5000,5000,10000,NO
+Haryana,Lane InDiscipline ,500,500,500,500,YES
+Haryana,No Entry,500,500,500,500,YES
+Haryana,Triple Riding,500,0,0,0,YES
+Haryana,Defective Register No. Plate,1000,1000,5000,5000,YES
+Haryana,Using Horn At Prohibited Places ,500,500,500,500,YES
+Haryana,Defective Silencer,500,500,500,500,NO
+Haryana,Jumping Traffic Signal,500,500,500,500,YES
+Haryana,Wrong Parking/No Parking,1500,1500,1500,1500,YES
+Gujarat,Over Speeding,1000,1000,1000,2000,YES
+Gujarat,Using Mobile Phone While Driving,1500,1500,1500,5000,YES
+Gujarat,Riding Without Helmet,1000,0,0,0,YES
+Gujarat,Driving Without Seat Belt,0,0,1000,5000,YES
+Gujarat,Driving/Riding Without License,1000,1000,2000,5000,YES
+Gujarat,Shrill Horn,1000,1000,1000,3000,NO
+Gujarat,Dangerous Driving,5000,5000,5000,10000,NO
+Gujarat,Lane InDiscipline ,1500,1500,3000,5000,YES
+Gujarat,No Entry,500,500,500,500,YES
+Gujarat,Triple Riding,1000,0,0,0,YES
+Gujarat,Defective Register No. Plate,1000,2000,3000,3000,YES
+Gujarat,Using Horn At Prohibited Places ,500,500,500,500,YES
+Gujarat,Wrong Parking/No Parking,1000,1000,1000,3000,YES
+Gujarat,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Jharkhand,Over Speeding,1000,1000,1000,2000,YES
+Jharkhand,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Jharkhand,Riding Without Helmet,500,0,0,0,YES
+Jharkhand,Driving Without Seat Belt,0,0,1000,1000,YES
+Jharkhand,Driving/Riding Without License,5000,5000,5000,10000,YES
+Jharkhand,Shrill Horn,500,1000,1000,1000,NO
+Jharkhand,Reckless Driving,5000,5000,5000,10000,YES
+Jharkhand,Lane InDiscipline ,5000,5000,5000,5000,YES
+Jharkhand,No Entry,500,500,500,1000,YES
+Jharkhand,Triple Riding,1000,0,0,0,YES
+Jharkhand,Defective Register No. Plate,500,500,500,1000,YES
+Jharkhand,Using Horn At Prohibited Places ,500,500,1000,1000,YES
+Jharkhand,Defective Silencer,1000,1000,1000,1000,NO
+Jharkhand,Jumping Traffic Signal,500,500,2500,5000,YES
+Jharkhand,Wrong Parking/No Parking,1000,1000,1000,2500,YES
+Sikkim,Over Speeding,1000,1000,1000,2000,YES
+Sikkim,Using Mobile Phone While Driving,5000,5000,5000,1000,YES
+Sikkim,Riding Without Helmet,1000,0,0,0,YES
+Sikkim,Driving Without Seat Belt,0,0,1000,1000,YES
+Sikkim,Driving/Riding Without License,5000,5000,5000,5000,YES
+Sikkim,Driving/Riding Without Insurance,5000,5000,5000,10000,YES
+Sikkim,Reckless Driving,5000,5000,5000,10000,YES
+Sikkim,Lane InDiscipline ,1000,1000,1000,2000,YES
+Sikkim,No Entry,500,500,500,500,YES
+Sikkim,Triple Riding,1000,0,0,0,YES
+Sikkim,Defective Register No. Plate,500,500,500,500,YES
+Sikkim,Using Horn At Prohibited Places ,1000,1000,1000,1000,YES
+Sikkim,Loud Horns,500,500,500,1000,NO
+Sikkim,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Sikkim,Wrong Parking/No Parking,500,500,500,500,YES
+Rajasthan,Over Speeding,1000,1000,1000,2000,YES
+Rajasthan,Using Mobile Phone While Driving,1000,1000,5000,10000,YES
+Rajasthan,Riding Without Helmet,1000,0,0,0,YES
+Rajasthan,Driving Without Seat Belt,0,0,1000,1000,YES
+Rajasthan,Driving/Riding Without License,5000,5000,5000,10000,YES
+Rajasthan,Driving/Riding Without Insurance,2000,2000,2000,4000,YES
+Rajasthan,Reckless Driving,500,500,5000,10000,YES
+Rajasthan,Lane InDiscipline ,100,100,200,600,YES
+Rajasthan,No Entry,10000,10000,20000,2000,YES
+Rajasthan,Triple Riding,1000,0,0,0,YES
+Rajasthan,Defective Register No. Plate,1000,1000,2000,5000,YES
+Rajasthan,Using Horn At Prohibited Places ,1000,1000,1000,1000,YES
+Rajasthan,Loud Horns,1000,1000,1500,2000,NO
+Rajasthan,Jumping Traffic Signal,1000,1000,1000,1000,YES
+Rajasthan,Wrong Parking/No Parking,500,500,500,1000,YES
+Assam,Over Speeding,1000,1000,2000,4000,YES
+Assam,Using Mobile Phone While Driving,1000,1000,1000,1000,YES
+Assam,Riding Without Helmet,1000,0,0,0,YES
+Assam,Driving Without Seat Belt,0,0,1000,1000,YES
+Assam,Driving/Riding Without License,1000,1000,2000,5000,YES
+Assam,Driving/Riding Without Insurance,1000,1000,2000,4000,YES
+Assam,Reckless Driving,1000,1000,1000,2000,YES
+Assam,Lane InDiscipline ,1000,1000,1000,2000,YES
+Assam,No Entry,2000,2000,2000,2000,YES
+Assam,Triple Riding,1000,0,0,0,YES
+Assam,Defective Register No. Plate,1000,1000,2000,4000,YES
+Assam,Using Horn At Prohibited Places ,1000,1000,1000,2000,YES
+Assam,Loud Horns,1000,1000,1000,2000,NO
+Assam,Jumping Traffic Signal,500,500,2000,5000,YES
+Assam,Wrong Parking/No Parking,1000,1000,2000,5000,YES
+Odisha,Over Speeding,1500,1500,1500,4000,YES
+Odisha,Using Mobile Phone While Driving,1000,1000,1000,0,YES
+Odisha,Riding Without Helmet,1000,0,0,0,YES
+Odisha,Driving Without Seat Belt,0,0,1000,1000,YES
+Odisha,Driving/Riding Without License,5000,5000,5000,10000,YES
+Odisha,Driving/Riding Without Insurance,2000,2000,2000,4000,YES
+Odisha,Reckless Driving,5000,5000,5000,5000,YES
+Odisha,Lane InDiscipline ,200,200,600,800,YES
+Odisha,No Entry,1000,1000,1000,1500,YES
+Odisha,Triple Riding,1000,0,0,0,YES
+Odisha,Defective Register No. Plate,5000,5000,5000,5000,YES
+Odisha,Using Horn At Prohibited Places ,1000,1000,1000,1000,YES
+Odisha,Loud Horns,500,1000,1000,1000,NO
+Odisha,Jumping Traffic Signal,500,500,2000,5000,YES
+Odisha,Wrong Parking/No Parking,500,500,1000,2000,YES
+Uttarkhand,Over Speeding,1000,1000,1000,3000,YES
+Uttarkhand,Using Mobile Phone While Driving,1000,1000,1000,5000,YES
+Uttarkhand,Riding Without Helmet,1000,0,0,0,YES
+Uttarkhand,Driving Without Seat Belt,0,0,1000,1000,YES
+Uttarkhand,Driving/Riding Without License,5000,5000,5000,10000,YES
+Uttarkhand,Driving/Riding Without Insurance,2000,2000,2000,4000,YES
+Uttarkhand,Reckless Driving,1000,1000,2000,5000,YES
+Uttarkhand,Lane InDiscipline ,500,500,500,1000,YES
+Uttarkhand,No Entry,500,500,500,1000,YES
+Uttarkhand,Triple Riding,500,0,0,0,YES
+Uttarkhand,Defective Register No. Plate,5000,5000,5000,10000,YES
+Uttarkhand,Using Horn At Prohibited Places ,1000,1000,1000,2000,YES
+Uttarkhand,Loud Horns,1000,1000,2000,3000,NO
+Uttarkhand,Jumping Traffic Signal,5000,5000,5000,10000,YES
+Uttarkhand,Wrong Parking/No Parking,500,500,500,1500,YES
+Arunachal Pradesh,Over Speeding,1000,1000,1000,2000,YES
+Arunachal Pradesh,Using Mobile Phone While Driving,5000,5000,5000,5000,YES
+Arunachal Pradesh,Riding Without Helmet,1000,0,0,0,YES
+Arunachal Pradesh,Driving Without Seat Belt,0,0,1000,1000,YES
+Arunachal Pradesh,Driving/Riding Without License,10000,10000,10000,10000,YES
+Arunachal Pradesh,Driving/Riding Without Insurance,2000,2000,2000,4000,YES
+Arunachal Pradesh,Reckless Driving,1000,1000,1000,5000,YES
+Arunachal Pradesh,Lane InDiscipline ,5000,5000,5000,10000,YES
+Arunachal Pradesh,No Entry,500,500,500,1000,YES
+Arunachal Pradesh,Triple Riding,2000,0,0,0,YES
+Arunachal Pradesh,Defective Register No. Plate,5000,5000,5000,10000,YES
+Arunachal Pradesh,Using Horn At Prohibited Places ,1000,1000,1000,1000,YES
+Arunachal Pradesh,Loud Horns,1000,1000,1000,2000,NO
+Arunachal Pradesh,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Arunachal Pradesh,Wrong Parking/No Parking,2000,2000,2000,4000,YES
+Bihar,Over Speeding,1000,1000,1000,2000,YES
+Bihar,Using Mobile Phone While Driving,2000,2000,2000,2000,YES
+Bihar,Riding Without Helmet,1000,0,0,0,YES
+Bihar,Driving Without Seat Belt,0,0,1000,1000,YES
+Bihar,Driving/Riding Without License,5000,5000,5000,5000,YES
+Bihar,Driving/Riding Without Insurance,1000,1000,1000,2000,YES
+Bihar,Reckless Driving,500,500,500,500,YES
+Bihar,Lane InDiscipline ,500,500,500,1000,YES
+Bihar,No Entry,500,500,500,500,YES
+Bihar,Triple Riding,1000,0,0,0,YES
+Bihar,Smoking While Driving,500,500,500,500,NO
+Bihar,Drunk And Drive,10000,10000,10000,10000,YES
+Bihar,Loud Horns,1000,1000,1000,2000,NO
+Bihar,Jumping Traffic Signal,500,500,500,500,YES
+Bihar,Wrong Parking/No Parking,500,500,500,1000,YES
+Chhattisgarh,Over Speeding,4000,4000,4000,4000,YES
+Chhattisgarh,Using Mobile Phone While Driving,1000,1000,1000,2000,YES
+Chhattisgarh,Riding Without Helmet,500,0,0,0,YES
+Chhattisgarh,Driving Without Seat Belt,0,1000,1000,1000,YES
+Chhattisgarh,Driving/Riding Without License,5000,5000,5000,5000,YES
+Chhattisgarh,Driving/Riding Without Insurance,2000,2000,2000,4000,YES
+Chhattisgarh,Driving Without Registration,2000,2000,2000,5000,NO
+Chhattisgarh,Lane InDiscipline ,500,500,500,1000,YES
+Chhattisgarh,No Entry,5000,5000,5000,5000,YES
+Chhattisgarh,Triple Riding,500,0,0,0,YES
+Chhattisgarh,Violating Traffic Rules,500,500,500,1000,NO
+Chhattisgarh,Drunk And Drive,10000,10000,10000,10000,YES
+Chhattisgarh,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Chhattisgarh,Jumping Traffic Signal,1000,1000,1000,2000,YES
+Chhattisgarh,Wrong Parking/No Parking,500,500,500,1000,YES
+Himachal Pradesh,Over Speeding,1000,1000,1000,4000,YES
+Himachal Pradesh,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Himachal Pradesh,Riding Without Helmet,1000,0,0,0,YES
+Himachal Pradesh,Driving Without Seat Belt,0,1000,1000,1000,YES
+Himachal Pradesh,Driving/Riding Without License,5000,5000,5000,10000,YES
+Himachal Pradesh,Driving/Riding Without Insurance,2000,2000,2000,4000,YES
+Himachal Pradesh,Violating Traffic Rules,500,500,500,1000,NO
+Himachal Pradesh,Lane InDiscipline ,500,500,500,1000,YES
+Himachal Pradesh,No Entry,500,500,500,1000,YES
+Himachal Pradesh,Triple Riding,1000,0,0,0,YES
+Himachal Pradesh,Dangerous Driving,1000,1000,1000,2000,NO
+Himachal Pradesh,Drunk And Drive,10000,10000,10000,10000,YES
+Himachal Pradesh,Loud Horns,1000,1000,1000,2000,NO
+Himachal Pradesh,Jumping Traffic Signal,1000,1000,1000,2000,YES
+Himachal Pradesh,Wrong Parking/No Parking,500,500,500,1000,YES
+Kerala,Over Speeding,1000,1000,1000,1000,YES
+Kerala,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Kerala,Riding Without Helmet,1000,0,0,0,YES
+Kerala,Driving Without Seat Belt,1000,1000,1000,1000,YES
+Kerala,Driving/Riding Without License,5000,5000,5000,5000,YES
+Kerala,Driving/Riding Without Insurance,2000,2000,2000,5000,YES
+Kerala,Drunk And Drive,1000,1000,1000,2000,YES
+Kerala,Lane InDiscipline ,1000,1000,1000,2000,YES
+Kerala,No Entry,1000,1000,1000,5000,YES
+Kerala,Disqualified Person Driving A Vechile,10000,10000,10000,15000,NO
+Kerala,Defective Register No. Plate,500,500,500,1000,YES
+Kerala,Minor Driving Vehicle,1000,1000,1000,2000,YES
+Kerala,Violating Traffic Rules,1000,1000,1000,2000,NO
+Kerala,Jumping Traffic Signal,5000,5000,5000,5000,YES
+Kerala,Wrong Parking/No Parking,500,500,500,1000,YES
+Manipur,Over Speeding,1000,1000,1000,2000,YES
+Manipur,Using Mobile Phone While Driving,1000,1000,1000,5000,YES
+Manipur,Riding Without Helmet,1000,0,0,0,YES
+Manipur,Driving Without Seat Belt,0,1000,1000,1000,YES
+Manipur,Driving/Riding Without License,5000,5000,5000,5000,YES
+Manipur,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Manipur,Reckless Driving,1000,1000,1000,5000,YES
+Manipur,Lane InDiscipline ,1000,1000,1000,2000,YES
+Manipur,No Entry,1000,1000,1000,2000,YES
+Manipur,Triple Riding,1000,0,0,0,YES
+Manipur,Defective Register No. Plate,5000,5000,5000,5000,YES
+Manipur,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Manipur,Violating Traffic Rules,1000,1000,1000,5000,NO
+Manipur,Jumping Traffic Signal,1000,1000,1000,1000,YES
+Manipur,Wrong Parking/No Parking,500,500,500,1000,YES
+Meghalaya,Over Speeding,1000,1000,1000,2000,YES
+Meghalaya,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Meghalaya,Riding Without Helmet,1000,0,0,0,YES
+Meghalaya,Driving Without Seat Belt,0,1000,1000,1000,YES
+Meghalaya,Driving/Riding Without License,5000,5000,5000,5000,YES
+Meghalaya,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Meghalaya,Reckless Driving,5000,5000,5000,10000,YES
+Meghalaya,Lane InDiscipline ,1000,1000,1000,2000,YES
+Meghalaya,No Entry,1000,1000,1000,2000,YES
+Meghalaya,Triple Riding,1000,0,0,0,YES
+Meghalaya,Over Loading,0,2000,2000,2000,NO
+Meghalaya,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Meghalaya,Obstructing Traffic Flow,1000,1000,1000,5000,NO
+Meghalaya,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Meghalaya,Wrong Parking/No Parking,500,500,500,1000,YES
+Mizoram,Over Speeding,1000,1000,1000,2000,YES
+Mizoram,Using Mobile Phone While Driving,5000,5000,5000,8000,YES
+Mizoram,Riding Without Helmet,1000,0,0,0,YES
+Mizoram,Driving Without Seat Belt,0,1000,1000,1000,YES
+Mizoram,Driving/Riding Without License,5000,5000,5000,5000,YES
+Mizoram,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Mizoram,Reckless Driving,5000,5000,5000,10000,YES
+Mizoram,Lane InDiscipline ,1000,1000,1000,2000,YES
+Mizoram,No Entry,1000,1000,1000,2000,YES
+Mizoram,Triple Riding,1000,0,0,0,YES
+Mizoram,Over Loading,2000,2000,2000,5000,NO
+Mizoram,Defective Register No. Plate,5000,5000,5000,5000,YES
+Mizoram,Violating Traffic Rules,1000,1000,1000,5000,NO
+Mizoram,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Mizoram,Wrong Parking/No Parking,500,500,500,1000,YES
+Nagaland,Over Speeding,1000,1000,1000,5000,YES
+Nagaland,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Nagaland,Riding Without Helmet,1000,0,0,0,YES
+Nagaland,Driving Without Seat Belt,0,1000,1000,1000,YES
+Nagaland,Driving/Riding Without License,5000,5000,5000,5000,YES
+Nagaland,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Nagaland,Reckless Driving,5000,5000,5000,5000,YES
+Nagaland,Lane InDiscipline ,1000,1000,1000,2000,YES
+Nagaland,No Entry,1000,1000,1000,2000,YES
+Nagaland,Triple Riding,1000,0,0,0,YES
+Nagaland,Defective Register No. Plate,5000,5000,5000,5000,YES
+Nagaland,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Nagaland,Over Loading,1000,2000,2000,5000,NO
+Nagaland,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Nagaland,Wrong Parking/No Parking,500,500,500,1000,YES
+Tripura,Over Speeding,1000,1000,1000,5000,YES
+Tripura,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+Tripura,Riding Without Helmet,1000,0,0,0,YES
+Tripura,Driving Without Seat Belt,0,1000,1000,1000,YES
+Tripura,Driving/Riding Without License,5000,5000,5000,5000,YES
+Tripura,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+Tripura,Reckless Driving,5000,5000,5000,10000,YES
+Tripura,Lane InDiscipline ,1000,1000,1000,2000,YES
+Tripura,Obstructing Traffic Flow,1000,1000,1000,5000,NO
+Tripura,Triple Riding,1000,0,0,0,YES
+Tripura,No Entry,1000,1000,1000,2000,YES
+Tripura,Minor Driving Vehicle,25000,25000,25000,25000,YES
+Tripura,Over Loading,1000,2000,2000,5000,NO
+Tripura,Jumping Traffic Signal,1000,1000,1000,5000,YES
+Tripura,Wrong Parking/No Parking,500,500,500,1000,YES
+West Bengal,Over Speeding,1000,1000,1000,5000,YES
+West Bengal,Using Mobile Phone While Driving,5000,5000,5000,10000,YES
+West Bengal,Riding Without Helmet,1000,0,0,0,YES
+West Bengal,Driving Without Seat Belt,0,1000,1000,1000,YES
+West Bengal,Driving/Riding Without License,5000,5000,5000,5000,YES
+West Bengal,Driving/Riding Without Insurance,2000,2000,2000,2000,YES
+West Bengal,Reckless Driving,5000,5000,5000,5000,YES
+West Bengal,Lane InDiscipline ,1000,1000,1000,2000,YES
+West Bengal,Obstructing Traffic Flow,1000,1000,1000,5000,NO
+West Bengal,Triple Riding,1000,0,0,0,YES
+West Bengal,No Entry,1000,1000,1000,2000,YES
+West Bengal,Minor Driving Vehicle,25000,25000,25000,25000,YES
+West Bengal,Over Loading,2000,2000,2000,5000,NO
+West Bengal,Jumping Traffic Signal,1000,1000,1000,5000,YES
+West Bengal,Wrong Parking/No Parking,500,500,500,1000,YES

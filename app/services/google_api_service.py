@@ -52,6 +52,7 @@ def getGoogleRoutes(GOOGLE_API_KEY,source, destination):
                         "overview_polyline_points":data["routes"][0]["overview_polyline"]["points"],
                         "lat_long": best_lat_long,
                         "route_points": best_route_points,
+                        # "combined_polyline": ''.join(best_polyline_points),
                         "polyline_points": best_polyline_points
                         }})
     # Check if there is an alternate route
@@ -60,7 +61,7 @@ def getGoogleRoutes(GOOGLE_API_KEY,source, destination):
         for lat_long in data["routes"][1]["legs"][0]["steps"]:
             alternate_lat_long.append(lat_long['end_location'])
         alternate_lat_long = [{'latitude': item['lat'], 'longitude': item['lng']} for item in alternate_lat_long]
-        best_polyline_points=extract_polyline(data['routes'][1]['legs'][0]['steps'])
+        alternate_polyline_points=extract_polyline(data['routes'][1]['legs'][0]['steps'])
         alternate_route_points=extract_lat_lng(data['routes'][1]['legs'][0]['steps'])
         routes.append({"alternate" : {"summary":data["routes"][1]["summary"], 
                         "distance":data["routes"][1]["legs"][0]["distance"]["text"],
@@ -68,13 +69,14 @@ def getGoogleRoutes(GOOGLE_API_KEY,source, destination):
                         "overview_polyline_points":data["routes"][1]["overview_polyline"]["points"],
                         "lat_long": alternate_lat_long,
                         "route_points": alternate_route_points,
-                        "polyline_points": best_polyline_points
+                        # "combined_polyline": ''.join(alternate_polyline_points),
+                        "polyline_points": alternate_polyline_points
                         }})   
     else:
         routes.append({"alternate" : {"summary":"No alternate route found", 
                         "distance":"",
                         "duration":"",
-                        "overview_polyline_points":"",
+                        "polyline_points":"",
                         "lat_long": "",
                         "route_points": ""
                         }}) 

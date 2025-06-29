@@ -25,6 +25,7 @@ import services.users_api_service as user
 import services.vishram_ghar_api_service as ghar
 import services.history_api_service as history
 import services.google_api_service as google_api
+import services.challans_api_service as challan
 
 
 from urllib.request import urlopen 
@@ -79,6 +80,7 @@ TABLE_WEIGH_BRIDGE_NEARBY='weigh_bridge_statewise';
 TABLE_CNG_STATIONS= 'cng_stations';
 TABLE_EV_STATIONS= 'ev_stations';
 TABLE_VISHRAM_GHAR= 'vishram_ghar';
+TABLE_CHALLAN= 'challans';
 
 #Decode Polyline
 def decode_polyline(encoded_polyline): 
@@ -443,6 +445,15 @@ def vishramGharAlongroute():
 def vishram_ghars_along_route():
     data = request.get_json()
     return ghar.getVishramGharAlongRouteByPoints(True,cursor, TABLE_VISHRAM_GHAR,data)
+
+
+@app.route('/getTrafficViolationFines',methods=['GET'])
+@jwt_required()
+def getTrafficViolationFines():
+    fines=challan.getTrafficFines(cursor, TABLE_CHALLAN)
+    return fines
+
+
 
 ## Pradeep Godi - code ends here
 
