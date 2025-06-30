@@ -226,6 +226,31 @@ def get_nearby_weigh_bridges():
     data = request.get_json()
     return nwb.get_nearby_weigh_bridges(cursor, TABLE_WEIGH_BRIDGE_NEARBY,data)
 
+@app.route('/weighBridgesAlongRoute', methods=['POST'])
+@jwt_required()
+def weigh_bridges_along_route():
+    data = request.get_json()
+    try:    
+        if not data or 'source' not in data or 'destination' not in data:
+            return {"message": "Source and destination are required"}, 400    
+        source=data.get('source')
+        destination=data.get('destination')
+        if not source or not destination:
+            return {"message": "Source and destination are required"}, 400
+        best_route,alternate_route=google_api.getGoogleRoutes(GOOGLE_API_KEY,source, destination)
+        if not best_route or not alternate_route:
+            return {"message": "Failed to fetch routes from Google API"}, 500
+        
+        best_route_locations=nwb.getWeighBridgeAlongRoute(cursor, TABLE_WEIGH_BRIDGE_NEARBY,best_route.get('route_points', []))
+        alternate_route_locations=nwb.getWeighBridgeAlongRoute(cursor, TABLE_WEIGH_BRIDGE_NEARBY,alternate_route.get('route_points', []))
+        routes= prepareMapsServiceResponse(best_route, alternate_route, best_route_locations, alternate_route_locations)
+
+        return jsonify(routes),200
+    except Exception as e:
+        print(str(e))
+        return {"message": "Invalid request data"}, 400
+
+
 # CNG stations APIs
 @app.route('/nearbyCNGStations',methods=['POST'])
 @jwt_required() 

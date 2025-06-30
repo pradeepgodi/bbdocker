@@ -1,8 +1,30 @@
 from shapely.geometry import LineString
 from collections import defaultdict
 from flask import jsonify
+import os
 
+def getWeighBridgeAlongRoute(cursor, TABLE_WEIGH_BRIDGE,lat_long):
+    THRESHOLD_DISTANCE=os.environ.get("THRESHOLD_DISTANCE") 
+    try:    
+        # location_lines = LineString([(loc['longitude'], loc['latitude']) for loc in data['points']])
+        location_lines=LineString(lat_long)
+      
+        # Query the data base for given vehicle type and location 
+        cursor.execute(f'''SELECT name,phone,city,formatted_address,latitude,longitude,capacity,length
+                         FROM {TABLE_WEIGH_BRIDGE} WHERE ST_DWithin(location::geography, 
+                         ST_SetSRID(ST_GeomFromText(%s),4326), {THRESHOLD_DISTANCE})''', (location_lines.wkt,))
+        
+        # Fetch all rows from database
+        nearby_wb = cursor.fetchall()
 
+        nearby_wb_data=[]
+        for data in nearby_wb:
+            temp_dict = {"name":data[0],"phone":data[1],"city":data[2],"address":data[3],"latitude":data[4],"longitude":data[5],"capacity":data[6],"length":data[7]} 
+            nearby_wb_data.append(temp_dict)
+        return nearby_wb_data,200
+    except Exception as e:
+        print(str(e))
+        return {"message": "Internal Server Error"}, 500  
 
 def get_nearby_weigh_bridges(cursor, TABLE_WEIGH_BRIDGE_NEARBY,data):
     try:

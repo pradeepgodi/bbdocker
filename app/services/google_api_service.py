@@ -5,7 +5,10 @@ def extract_polyline(steps):
     polylines = []
     for step in steps:
         if 'polyline' in step:
-            polylines.append(step['polyline']['points'])
+            point=step['polyline']['points']
+            if not isinstance(point, str):
+                print("Warning: Polyline points are not a string:", point)
+            polylines.append(point)
     return polylines
 
 
@@ -76,7 +79,7 @@ def getGoogleRoutes(GOOGLE_API_KEY,source, destination):
         routes.append({"alternate" : {"summary":"No alternate route found", 
                         "distance":"",
                         "duration":"",
-                        "polyline_points":"",
+                        "polyline_points":[],
                         "lat_long": "",
                         "route_points": ""
                         }}) 
