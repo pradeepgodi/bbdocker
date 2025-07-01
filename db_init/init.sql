@@ -84,17 +84,18 @@ CSV HEADER;
 
 
 ----------users_new table sql queries
-CREATE TABLE users_new (
-    id integer,
-    name TEXT,
-    phone TEXT,
-    vehicle_number TEXT,
-    dob TEXT,
-    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updatedat TIMESTAMP DEFAULT CURRENT_TIMESTAMP ) ;
+CREATE TABLE if not exists users (
+	id SERIAL,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(15) NOT NULL UNIQUE,
+    vehicle_type VARCHAR(50) NOT NULL,
+    fuel_type VARCHAR(50) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-COPY users_new(id,name, phone, vehicle_number, dob,createdat, updatedat)
-FROM '/docker-entrypoint-initdb.d/users_new.csv'
+COPY users(id,name, phone, vehicle_type, fuel_type, email, created_date)
+FROM '/docker-entrypoint-initdb.d/users.csv'
 DELIMITER ','
 CSV HEADER;   
 --------------------------------------

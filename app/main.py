@@ -72,7 +72,7 @@ def check_if_token_in_blacklist(jwt_header, jwt_payload):
     return jti in blacklist
 
 TABLE_NAME='BUNKSBUDDYPRODUCTS';
-TABLE_USERS_NAME='Users_New';
+TABLE_USERS='users';
 TABLE_HISTORY_NAME='History_New';
 TABLE_TOLL_PLAZA= 'toll_plaza';
 TABLE_WEIGH_BRIDGE='test_weigh_bridge';
@@ -127,7 +127,7 @@ def getTokensAtLogin():
     Expects JSON: {"phone": "..."}
     """
     phone = request.json.get("phone", None)
-    access_token, refresh_token, user=token.checkUserExists(phone, cursor, TABLE_USERS_NAME)
+    access_token, refresh_token, user=token.checkUserExists(phone, cursor, TABLE_USERS)
     if not user:
         return jsonify({"error": "User not found",'phone':phone}), 404
     else:
@@ -389,7 +389,7 @@ def getUserRecord():
     if data:
         if request.method == 'GET':
             phone = data.get('phone')
-            message = user.getUsers(cursor, TABLE_USERS_NAME,phone)
+            message = user.getUsers(cursor, TABLE_USERS,phone)
             if message:
                 return jsonify(message), 200
             else:
@@ -401,11 +401,15 @@ def registerNewUser():
     if data:
         name = data.get('name')
         phone = str(data.get('phone'))
-        vehicle_number = data.get('vehicle_number')
-        if not name or not phone or not vehicle_number:
-            return {"message": "Name, phone, and vehicle number are required"}, 400
+        vehicle_type = data.get('vehicle_type')
+        fuel_type = data.get('fuel_type')
+        if not name or not phone or not vehicle_type or not fuel_type:
+            return {"message": "Name, phone, vehicle type and fuel type are required"}, 400
+        email = data.get('email')
+        if not email:
+            email = None
         access_token, refresh_token=token.create_tokens(phone)
-        message=user.addUser(cursor,name,phone,vehicle_number, TABLE_USERS_NAME)
+        message=user.addUser(cursor,data, TABLE_USERS)
         try:
             if message.get('code', 200) == 201:
                 access_token, refresh_token=token.create_tokens(phone)  # Generate access token for the user
@@ -421,11 +425,11 @@ def registerNewUser():
                     return jsonify({"error": "Failed to create token"}), 500
             elif message.get('code', 200) == 200:
                 return jsonify(
-                        access_token=access_token,
-                        refresh_token=refresh_token,
-                        message=message.get("message"),
-                        user=message.get("user"),
-                        code=message.get('code', 200)
+                            access_token=access_token,
+                            refresh_token=refresh_token,
+                            message=message.get("message"),
+                            user=message.get("user"),
+                            code=message.get('code', 200)
                 ), message.get('code', 200)
         except Exception as e:
             print(f"Error in processing user registration: {e}")
@@ -679,7 +683,7 @@ def historyTable():
     elif request.method == 'POST':
         data = request.get_json()
         if data:
-            add_history=history.addUserHistory(cursor,data,TABLE_HISTORY_NAME,TABLE_USERS_NAME)
+            add_history=history.addUserHistory(cursor,data,TABLE_HISTORY_NAME,TABLE_USERS)
             return add_history
         else:
             return {"message": "Request body cannot be empty"}, 400

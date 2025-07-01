@@ -17,11 +17,11 @@ def checkUserExists(phone, cursor, TABLE_USERS_NAME):
             user = {
                 "id": record[0],
                 "name": record[1],
-                "phone": record[2]
-                # "vehicle_number": record[3],
-                # "dob": record[4],
-                # "created_at": record[5],
-                # "updated_at": record[6]
+                "phone": record[2],
+                "vehicle_type": record[3],
+                "fuel_type": record[4],
+                "email": record[5],
+                "created_date": record[6]
             }
             access_token, refresh_token=create_tokens(phone)
         return access_token, refresh_token, user
