@@ -21,7 +21,7 @@ def getWeighBridgeAlongRoute(cursor, TABLE_WEIGH_BRIDGE,lat_long):
         for data in nearby_wb:
             temp_dict = {"name":data[0],"phone":data[1],"city":data[2],"address":data[3],"latitude":data[4],"longitude":data[5],"capacity":data[6],"length":data[7]} 
             nearby_wb_data.append(temp_dict)
-        return nearby_wb_data,200
+        return nearby_wb_data
     except Exception as e:
         print(str(e))
         return {"message": "Internal Server Error"}, 500  
