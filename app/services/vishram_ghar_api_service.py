@@ -86,7 +86,7 @@ def getVishramGharAlongRouteByPoints(cursor, TABLE_VISHRAM_GHAR,lat_long):
         for data in nearby_wb:
             temp_dict = {"omc":data[0],"code":data[1],"name":data[2],"area":data[3],"latitude":data[4],"longitude":data[5]} 
             nearby_wb_data.append(temp_dict)
-        return nearby_wb_data,200
+        return nearby_wb_data
     except Exception as e:
         print(str(e))
         return {"message": "Internal Server Error"}, 500  

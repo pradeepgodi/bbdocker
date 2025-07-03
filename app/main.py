@@ -469,11 +469,11 @@ def vishramGharAlongroute():
         return {"message": "Invalid request data"}, 400
 
 
-@app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
-@jwt_required()
-def vishram_ghars_along_route():
-    data = request.get_json()
-    return ghar.getVishramGharAlongRouteByPoints(True,cursor, TABLE_VISHRAM_GHAR,data)
+# @app.route('/vishramGharAlongRouteByPoints',methods=['POST'])
+# @jwt_required()
+# def vishram_ghars_along_route():
+#     data = request.get_json()
+#     return ghar.getVishramGharAlongRouteByPoints(True,cursor, TABLE_VISHRAM_GHAR,data)
 
 
 @app.route('/getTrafficViolationFines',methods=['GET'])
