@@ -5,7 +5,7 @@ from flask import jsonify
 def getTrafficFines(cursor, TABLE_CHALLAN):
     try:
         query = f"""
-                    SELECT jsonb_object_agg(violationdescription, violation_data) AS result
+                    SELECT jsonb_object_agg(trim(violationdescription), violation_data) AS result
                     FROM (
                         SELECT 
                             violationdescription,
