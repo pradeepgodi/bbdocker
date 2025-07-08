@@ -214,7 +214,6 @@ def tollsAlongtheRoute():
 
 
 @app.route('/tollVehicleTypes',methods=['GET'])
-# @jwt_required()
 def tollVehicleTypes():
     header_validation=True
     return toll.getTollVehicleTypes(header_validation)
@@ -619,7 +618,6 @@ def productsNearBy():
     # return jsonify({'test':})
 
 @app.route('/getProducts',methods=['GET'])
-@jwt_required()
 def getProducts():
     return jsonify([{
         "id":1,
