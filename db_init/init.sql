@@ -47,19 +47,18 @@ SET location = ST_SetSRID(
 
 
 -- fuel table sql queries
-CREATE TABLE bunksbuddyproducts(id integer,product TEXT, city varchar(100),latitude float,longitude float,price float);
+CREATE TABLE bunksbuddyproducts(id integer,product TEXT, city varchar(100),latitude float,longitude float,price float,location GEOMETRY(Point, 4326));
 
-COPY bunksbuddyproducts(id,product,city, latitude, longitude, price)
-FROM '/docker-entrypoint-initdb.d/fuel_data_updated.csv'
+COPY bunksbuddyproducts(id,product,city, latitude, longitude, price,location)
+FROM '/docker-entrypoint-initdb.d/fuel_stations.csv'
 DELIMITER ','
 CSV HEADER;
-
-
+/*
 ALTER TABLE bunksbuddyproducts
 ADD COLUMN location GEOMETRY(Point, 4326);
 
 UPDATE bunksbuddyproducts
-SET location = ST_SetSRID(ST_MakePoint(longitude::DOUBLE PRECISION,latitude::DOUBLE PRECISION ),4326);
+SET location = ST_SetSRID(ST_MakePoint(longitude::DOUBLE PRECISION,latitude::DOUBLE PRECISION ),4326); */
 ----------------------------------
 
 -- create hsitroy new table
@@ -144,14 +143,16 @@ CREATE TABLE ev_stations (
     latitude FLOAT,
     longitude FLOAT,
     phone TEXT,
-    address TEXT
+    address TEXT,
+	location GEOMETRY(Point, 4326)
 );
 
-COPY ev_stations(name, latitude, longitude, phone, address)
-FROM '/docker-entrypoint-initdb.d/ev_data.csv'
+COPY ev_stations(name, latitude, longitude, phone, address,location)
+FROM '/docker-entrypoint-initdb.d/ev_stations.csv'
 DELIMITER ','
 CSV HEADER;
 
+/*
 ALTER TABLE ev_stations
 ADD COLUMN location GEOMETRY(Point, 4326);
 
@@ -162,7 +163,7 @@ SET location = ST_SetSRID(
                       latitude::DOUBLE PRECISION
                   ),
                   4326
-              );
+              ); */
 
 
 -------- CNG table sql queries
@@ -171,20 +172,22 @@ CREATE TABLE cng_stations (
     latitude FLOAT,
     longitude FLOAT,
     phone TEXT,
-    address TEXT
+    address TEXT,
+	location GEOMETRY(Point, 4326)
 );
 
-COPY cng_stations(name, latitude, longitude, phone, address)
-FROM '/docker-entrypoint-initdb.d/cng_data.csv'
+COPY cng_stations(name, latitude, longitude, phone, address,location)
+FROM '/docker-entrypoint-initdb.d/cng_stations.csv'
 DELIMITER ','
 CSV HEADER;
 
+/*
 ALTER TABLE cng_stations
 ADD COLUMN location GEOMETRY(Point, 4326);
 
 UPDATE cng_stations
 SET location = ST_SetSRID(ST_MakePoint(longitude::DOUBLE PRECISION,latitude::DOUBLE PRECISION ),4326);
-
+*/
 
 
 -- Toll plaza sql queries
